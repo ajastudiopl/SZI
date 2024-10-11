@@ -26,3 +26,4 @@ W zakładce Users:
 Users
 * Tło dla strony i dla iframe jest domyślnie czarne 
 * Pasek uytkownika jest teraz na dole strony 
+testowy dopisek

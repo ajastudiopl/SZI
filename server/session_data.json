@@ -6,15 +6,19 @@
       "content": "Opis pierwszej sceny",
       "users": {
         "user1": "Info dla user 1 Pierwsza informacja ",
-        "user2": "Info dla user 2 Pierwsza informacja ",
         "user3": "Info dla user 2 Pierwsza informacja ",
         "user4": "Info dla user 2 Pierwsza informacja "
       },
-      "multimedia": {},
+      "multimedia": {
+        "user1": {
+          "type": "Brak",
+          "value": "http://192.168.0.23:3000/timeline.html"
+        }
+      },
       "order": 1,
       "userSelections": {
         "user1": true,
-        "user2": true,
+        "user2": false,
         "user3": true,
         "user4": true
       }

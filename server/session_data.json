@@ -1,0 +1,166 @@
+{
+  "scenes": [
+    {
+      "id": 1,
+      "title": "PIerwsza scena Tu będzie info dla 1 2 3 i 4",
+      "content": "Opis pierwszej sceny",
+      "users": {
+        "user1": "Info dla user 1 Pierwsza informacja ",
+        "user2": "Info dla user 2 Pierwsza informacja ",
+        "user3": "Info dla user 2 Pierwsza informacja ",
+        "user4": "Info dla user 2 Pierwsza informacja "
+      },
+      "multimedia": {},
+      "order": 1,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true,
+        "user4": true
+      }
+    },
+    {
+      "id": 2,
+      "title": "PIerwsza scena Tu będzie info dla 1 2 3 i 4 (duplikat)",
+      "content": "Opis pierwszej sceny",
+      "users": {
+        "user1": "Info dla user 1 Druga informacja ",
+        "user2": "Info dla user 2 Pierwsza informacja ",
+        "user3": "Info dla user 3 Pierwsza informacja ",
+        "user4": "Info dla user 4"
+      },
+      "multimedia": {},
+      "order": 2,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true,
+        "user4": true
+      }
+    },
+    {
+      "id": 3,
+      "title": "Trzecia Scena info tylko dla 2 i 3",
+      "content": "Tu będzie scena z informacjami tylko dla użytkowników 2 i 3",
+      "users": {
+        "user1": "",
+        "user2": "Nowa informacja dla user 2",
+        "user3": "Nowa informacja dla user3\n",
+        "user4": ""
+      },
+      "multimedia": {},
+      "order": 3,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true,
+        "user4": true
+      }
+    },
+    {
+      "id": 4,
+      "title": "Trzecia Scena info tylko dla 2 i 3 (duplikat)",
+      "content": "Tu będzie scena z informacjami tylko dla użytkowników 2 i 3",
+      "users": {
+        "user1": "",
+        "user2": "Zmieniona informacja dla user 2",
+        "user3": "Zmieniona informacja dla user3\n",
+        "user4": ""
+      },
+      "multimedia": {},
+      "order": 4,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true,
+        "user4": true
+      }
+    },
+    {
+      "id": 5,
+      "title": "5. PIerwsza scena Tu będzie info dla Wszystkich",
+      "content": "nowa wiadomość do wszystkich",
+      "users": {
+        "user1": "Zupełnie nowa wiadomość do wszystkich.",
+        "user2": "Zupełnie nowa wiadomość do wszystkich.",
+        "user3": "Zupełnie nowa wiadomość do wszystkich.",
+        "user4": "Zupełnie nowa wiadomość do wszystkich."
+      },
+      "multimedia": {},
+      "order": 5,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true,
+        "user4": true
+      }
+    },
+    {
+      "id": 6,
+      "title": "Info ze stroną dla user",
+      "content": "",
+      "users": {
+        "user1": "Informacja ze stroną www dla user 1",
+        "user2": "",
+        "user3": "",
+        "user4": ""
+      },
+      "multimedia": {
+        "user1": {
+          "type": "Brak",
+          "value": "https://www.ajastudio.pl/"
+        }
+      },
+      "order": 6,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true,
+        "user4": true
+      }
+    },
+    {
+      "id": 7,
+      "title": "Info ze stroną dla user (duplikat)",
+      "content": "",
+      "users": {
+        "user1": "Informacja ze stroną www dla user 1"
+      },
+      "multimedia": {
+        "user1": {
+          "type": "Brak",
+          "value": "https://www.ajastudio.pl/"
+        }
+      },
+      "order": 7,
+      "userSelections": {
+        "user1": true,
+        "user2": false,
+        "user3": false,
+        "user4": false
+      }
+    }
+  ],
+  "users": [
+    {
+      "id": "user1",
+      "name": "Użytkownik 1"
+    },
+    {
+      "id": "user2",
+      "name": "Imię user2"
+    },
+    {
+      "id": "user3",
+      "name": "Imię user3"
+    },
+    {
+      "id": "user4",
+      "name": "Imię user4"
+    },
+    {
+      "id": "user5",
+      "name": ""
+    }
+  ]
+}

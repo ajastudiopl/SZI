@@ -95,7 +95,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// --- Istniejące Endpointy ---
+// --- Endpointy ---
 
 // Endpoint do pobierania konfiguracji
 app.get('/config', (req, res) => {
@@ -140,19 +140,31 @@ app.post('/save', (req, res) => {
     const { scenes, users } = req.body;
     console.log('Otrzymano dane do zapisu:', { scenes, users });
 
-    if (!scenes || !users) {
-        return res.status(400).json({ error: 'scenes i users są wymagane' });
+    if (!Array.isArray(scenes) || !Array.isArray(users)) {
+        return res.status(400).json({ error: 'scenes i users muszą być tablicami.' });
     }
 
     try {
         const sessionData = readSessionData();
 
-        // Aktualizujemy tylko sceny typu 'regular', resztę pozostawiamy
-        const otherScenes = sessionData.scenes.filter(scene => scene.type !== 'regular');
-        sessionData.scenes = otherScenes.concat(scenes);
+        // Tworzymy mapę istniejących scen po ich ID
+        const existingScenesMap = {};
+        sessionData.scenes.forEach(scene => {
+            existingScenesMap[scene.id] = scene;
+        });
+
+        // Aktualizujemy lub dodajemy sceny typu 'regular'
+        scenes.forEach(scene => {
+            if (scene.type === 'regular') {
+                existingScenesMap[scene.id] = scene;
+            }
+        });
 
         // Aktualizujemy użytkowników
         sessionData.users = users;
+
+        // Tworzymy nową listę scen z mapy
+        sessionData.scenes = Object.values(existingScenesMap);
 
         writeSessionData(sessionData);
         console.log('Dane sesji zapisane poprawnie');
@@ -169,8 +181,6 @@ app.get('/users', (req, res) => {
     const usersList = sessionData.users;
     res.json({ users: usersList });
 });
-
-// --- Nowe Endpointy Dodane dla Timeline ---
 
 // Endpoint do przesyłania plików audio
 app.post('/upload-audio', upload.single('audio'), (req, res) => {
@@ -189,16 +199,28 @@ app.post('/save-scenes', (req, res) => {
     const { scenes } = req.body;
     console.log('Otrzymano dane scen do zapisu:', JSON.stringify(scenes, null, 2));
 
-    if (!scenes || !Array.isArray(scenes)) {
-        return res.status(400).json({ error: 'scenes są wymagane i muszą być tablicą.' });
+    if (!Array.isArray(scenes)) {
+        return res.status(400).json({ error: 'scenes muszą być tablicą.' });
     }
 
     try {
         const sessionData = readSessionData();
 
-        // Aktualizujemy tylko sceny typu 'timeline', resztę pozostawiamy
-        const otherScenes = sessionData.scenes.filter(scene => scene.type !== 'timeline');
-        sessionData.scenes = otherScenes.concat(scenes);
+        // Tworzymy mapę istniejących scen po ich ID
+        const existingScenesMap = {};
+        sessionData.scenes.forEach(scene => {
+            existingScenesMap[scene.id] = scene;
+        });
+
+        // Aktualizujemy lub dodajemy sceny typu 'timeline'
+        scenes.forEach(scene => {
+            if (scene.type === 'timeline') {
+                existingScenesMap[scene.id] = scene;
+            }
+        });
+
+        // Tworzymy nową listę scen z mapy
+        sessionData.scenes = Object.values(existingScenesMap);
 
         writeSessionData(sessionData);
         res.json({ message: 'Sceny zostały zapisane.' });
@@ -263,8 +285,16 @@ app.post('/add-scene', (req, res) => {
         // Zapewniamy unikalne ID sceny
         newScene.id = uuidv4();
 
-        // Dodajemy nową scenę do listy scen 'regular'
-        sessionData.scenes.push(newScene);
+        // Sprawdzamy, czy scena z takim ID już istnieje
+        const existingSceneIndex = sessionData.scenes.findIndex(scene => scene.id === newScene.id);
+
+        if (existingSceneIndex !== -1) {
+            // Jeśli scena istnieje, aktualizujemy ją
+            sessionData.scenes[existingSceneIndex] = newScene;
+        } else {
+            // Jeśli nie, dodajemy nową scenę
+            sessionData.scenes.push(newScene);
+        }
 
         writeSessionData(sessionData);
         res.json({ message: 'Scena została dodana do listy scen w editmode.' });
@@ -285,7 +315,6 @@ app.listen(httpPort, '0.0.0.0', () => {
 });
 
 // Serwer WebSocket
-
 const wsPort = 8080;
 const wss = new WebSocket.Server({ port: wsPort }, () => {
     console.log(`Serwer WebSocket działa na porcie ${wsPort}`);

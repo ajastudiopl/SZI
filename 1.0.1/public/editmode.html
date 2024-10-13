@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>System Zarządzania Informacją</title>
+    <!-- Link do zewnętrznych plików CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Toolbar z tytułem po lewej i przyciskiem Live Show po prawej -->
+    <div class="toolbar">
+        <h1>System Zarządzania Informacją</h1>
+        <button onclick="location.href='liveshow.html'">Live Show</button>
+    </div>
+
+    <!-- Zakładki -->
+    <div class="tabs">
+        <button class="tablink" onclick="openTab(event, 'users-tab');">Użytkownicy</button>
+        <button class="tablink active" onclick="openTab(event, 'scenes-tab')">Sceny</button>
+        <button class="tablink" onclick="openTab(event, 'settings-tab')">Ustawienia</button>
+    </div>
+
+    <!-- Zakładka Użytkownicy -->
+    <div id="users-tab" class="tab-content">
+        <div class="container">
+            <h2>Edytuj Użytkowników</h2>
+            <button onclick="addUser()">Dodaj użytkownika</button>
+            <div class="user-list" id="user-list">
+                <h2>Lista użytkowników</h2>
+                <!-- Lista użytkowników będzie generowana dynamicznie -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Zakładka Sceny -->
+    <div id="scenes-tab" class="tab-content active">
+        <div class="container">
+            <h2>Utwórz nową scenę</h2>
+            <input type="text" id="new-scene-title" class="scene-title" placeholder="Tytuł sceny" onkeydown="if(event.key === 'Enter') addNewScene();">
+            <textarea id="new-scene-content" class="scene-content" placeholder="Opis sceny (opcjonalne)" onkeydown="if(event.key === 'Enter') addNewScene();"></textarea>
+            <button onclick="addNewScene()">Dodaj scenę</button>
+
+            <!-- Przycisk "Edytuj Sceny" -->
+            <h2>Lista scen</h2>
+            <button class="edit-scenes-button" onclick="editScenes()">Edytuj Sceny</button>
+
+            <div class="scene-list" id="scene-list">
+                <!-- Lista scen będzie generowana dynamicznie -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Zakładka Ustawienia -->
+    <div id="settings-tab" class="tab-content">
+        <div class="container">
+            <h2>Ustawienia programu</h2>
+            <div class="toolbar-left">
+                <button onclick="newSession()">Nowa sesja</button>
+                <button onclick="saveSessionToFile()">Zapisz sesję</button>
+                <input type="file" id="load-session-file" style="display: none;" onchange="loadSessionFromFile()">
+                <button onclick="document.getElementById('load-session-file').click()">Wczytaj sesję</button>
+            </div>
+
+            <h3>Ustawienia adresu IP serwera WebSocket</h3>
+            <div class="ip-settings">
+                <label for="ip-address">Podaj adres IP:</label>
+                <input type="text" id="ip-address" placeholder="192.168.X.X">
+                <button onclick="saveIpAddress()">Zapisz adres IP</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edycji Sceny -->
+    <div id="editSceneModal">
+        <!-- Nagłówek modala -->
+        <div class="modal-header">
+            <button onclick="navigateScene('prev')">Poprzednia scena</button>
+            <h2 id="scene-title-header" contenteditable="true" oninput="saveEditedTitle()"></h2>
+            <input type="text" id="scene-description-header" placeholder="Opis sceny" oninput="saveEditedDescription()">
+            <button onclick="navigateScene('next')">Następna scena</button>
+        </div>
+
+        <!-- Opcje wysyłki -->
+        <div id="edit-scene-users" class="user-content-editor">
+            <button class="send-to-many-button" onclick="toggleSendToManyOptions()">Edytuj do wielu</button>
+            <div id="send-to-many-options" style="display: none;">
+                <label>
+                    <input type="checkbox" id="select-all-users" onchange="toggleSelectAllUsers()"> Zaznacz wszystkich
+                </label>
+
+                <div id="send-to-many-users">
+                    <!-- Checkboxy użytkowników będą generowane dynamicznie -->
+                </div>
+
+                <div id="send-to-many-content">
+                    <label for="content-to-many">Treść dla wybranych użytkowników:</label>
+                    <textarea id="content-to-many" oninput="saveContentToMany()"></textarea>
+                </div>
+            </div>
+
+            <!-- Zawartość dla wybranych użytkowników -->
+            <div id="select-users-content">
+                <!-- Pola treści specyficzne dla użytkowników będą generowane dynamicznie -->
+            </div>
+        </div>
+
+        <!-- Przycisk zamknięcia modala -->
+        <button class="close-modal" onclick="closeEditModal()">Zamknij</button>
+    </div>
+
+    <!-- Modal Edycji Wyglądu Sceny -->
+    <div id="editSceneAppearanceModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEditAppearanceModal()">&times;</span>
+            <h2>Widok Sceny</h2>
+            <!-- Podgląd sceny -->
+            <div id="scene-preview">
+                <!-- Zawartość podglądu będzie generowana dynamicznie -->
+            </div>
+            <!-- Opcje edycji wyglądu -->
+            <div id="appearance-options">
+                <label for="font-size">Rozmiar czcionki:</label>
+                <input type="range" id="font-size" min="10" max="72" value="16" oninput="updateAppearance('fontSize', this.value + 'px')">
+                <span id="font-size-value">16px</span>
+                <br>
+                <label for="multimedia-height">Wysokość sekcji multimediów:</label>
+                <input type="range" id="multimedia-height" min="100" max="800" value="300" oninput="updateAppearance('multimediaHeight', this.value + 'px')">
+                <span id="multimedia-height-value">300px</span>
+                <!-- Dodaj inne opcje wyglądu w razie potrzeby -->
+            </div>
+            <button onclick="saveAppearanceChanges()">Zapisz zmiany</button>
+        </div>
+    </div>
+
+    <!-- Linki do zewnętrznych plików JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

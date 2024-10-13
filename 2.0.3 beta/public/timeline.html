@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>WaveSurfer z Edytowalnymi Cue Punktami i Zarządzaniem Scenami</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        /* Waveform Styles */
+        #waveform {
+            width: 100%;
+            height: 200px;
+            background-color: #eaeaea;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .cue-marker {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: red;
+            cursor: pointer;
+        }
+
+        .cue-label {
+            position: absolute;
+            top: -20px;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: black;
+            white-space: nowrap;
+        }
+
+        /* Time Scale Styles */
+        #timeScale {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 10px;
+            position: relative;
+            height: 20px;
+        }
+
+        #timeScale span {
+            position: absolute;
+            top: 0;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        /* Button and Input Styles */
+        button, input[type="file"], #cueList, #sceneList {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4F4A85;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #383351;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-input-label {
+            padding: 10px 20px;
+            background-color: #4F4A85;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .file-input-label:hover {
+            background-color: #383351;
+        }
+
+        /* Cue List Styles */
+        #cueList, #sceneList {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #cueList li, #sceneList li {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #cueList li span, #sceneList li span {
+            flex: 1;
+        }
+
+        #cueList li div, #sceneList li div {
+            display: flex;
+            gap: 5px;
+        }
+
+        #cueList button, #sceneList button {
+            background-color: #c0392b;
+            padding: 5px 10px;
+            font-size: 12px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        #cueList button:hover, #sceneList button:hover {
+            background-color: #e74c3c;
+        }
+
+        /* Timer Styles */
+        #timer {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; /* 5% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 400px; /* Could be more or less, depending on screen size */
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+
+        .close-modal:hover,
+        .close-modal:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        /* Scene List Styles */
+        #sceneList li {
+            cursor: pointer;
+            background-color: #d1d8e0;
+            position: relative;
+        }
+
+        #sceneList li.selected {
+            background-color: #4F4A85;
+            color: white;
+        }
+
+        /* Additional Styles */
+        .user-content-editor select, .user-content-editor textarea {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .time-input {
+            width: 80px;
+        }
+
+        /* Responsive Modal */
+        @media (max-width: 500px) {
+            .modal-content {
+                width: 90%;
+            }
+        }
+
+        /* Highlight Cue */
+        .highlight {
+            background-color: yellow;
+            transition: background-color 0.5s;
+        }
+
+        /* Upload Audio Button Styles */
+        #uploadAudioBtn {
+            padding: 10px 20px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        #uploadAudioBtn:hover {
+            background-color: #1e8449;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Timer showing the current marker time -->
+<div id="timer">00:00:00</div>
+
+<!-- Waveform Container -->
+<div id="waveform"></div>
+
+<!-- Time Scale -->
+<div id="timeScale">
+    <!-- Time ticks will be rendered here -->
+</div>
+
+<!-- Controls -->
+<div>
+    <!-- Play/Pause Button -->
+    <button id="playPauseBtn">Play</button>
+
+    <!-- File Input for Audio Upload -->
+    <label for="fileInput" class="file-input-label">Choose File</label>
+    <input type="file" id="fileInput" accept="audio/*" />
+
+    <!-- Add Cue Button -->
+    <button id="addCueBtn">Add Cue at Current Time</button>
+
+    <!-- Add Scene Button -->
+    <button id="addSceneBtn">Add Scene</button>
+
+    <!-- Save Scenes Button -->
+    <button id="saveScenesBtn">Save Scenes</button>
+</div>
+
+<!-- Scene List -->
+<h3>Scenes</h3>
+<ul id="sceneList">
+    <!-- Scenes will be dynamically added here -->
+</ul>
+
+<!-- Cue List -->
+<h3>Cues</h3>
+<ul id="cueList">
+    <!-- Cues will be dynamically added here -->
+</ul>
+
+<!-- Modal for Editing Cues -->
+<div id="editCueModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeEditCueModal()">&times;</span>
+        <h2>Edit Cue</h2>
+        <div>
+            <label for="cue-users">Select Users:</label>
+            <select id="cue-users" multiple>
+                <!-- User options will be populated dynamically -->
+            </select>
+        </div>
+        <div id="cue-messages">
+            <!-- Message inputs will be generated here based on selected users -->
+        </div>
+        <button onclick="saveCueEdits()">Save</button>
+    </div>
+</div>
+
+<script type="module">
+import WaveSurfer from 'https://cdn.jsdelivr.net/npm/wavesurfer.js@7/dist/wavesurfer.esm.js'
+
+// Create a WaveSurfer instance
+let wavesurfer = null;
+
+// Scene and Cue Management
+let scenes = [];
+let currentScene = null;
+let cueCount = 0;
+
+// Users - Pobieranie dynamicznie z serwera
+let users = [];
+
+// Elements
+const playPauseBtn = document.getElementById('playPauseBtn');
+const fileInput = document.getElementById('fileInput');
+const addCueBtn = document.getElementById('addCueBtn');
+const cueList = document.getElementById('cueList');
+const addSceneBtn = document.getElementById('addSceneBtn');
+const sceneList = document.getElementById('sceneList');
+const saveScenesBtn = document.getElementById('saveScenesBtn');
+const timer = document.getElementById('timer');
+
+// Modal Elements
+const editCueModal = document.getElementById('editCueModal');
+const cueUsersSelect = document.getElementById('cue-users');
+const cueMessagesDiv = document.getElementById('cue-messages');
+
+let editingCueId = null;
+
+// Fetch Users from Server
+function fetchUsers() {
+    fetch('http://localhost:3000/users') // Zaktualizuj URL, jeśli serwer jest na innym adresie
+    .then(response => response.json())
+    .then(data => {
+        if (data.users && Array.isArray(data.users)) {
+            users = data.users;
+            initializeUserOptions();
+        }
+    })
+    .catch(error => {
+        console.error('Błąd podczas pobierania użytkowników:', error);
+    });
+}
+
+// Initialize User Options in Modal
+function initializeUserOptions() {
+    cueUsersSelect.innerHTML = ''; // Clear existing options
+    users.forEach(user => {
+        const option = document.createElement('option');
+        option.value = user.name;
+        option.textContent = user.name;
+        cueUsersSelect.appendChild(option);
+    });
+}
+
+// Event Listeners
+playPauseBtn.addEventListener('click', togglePlayPause);
+fileInput.addEventListener('change', handleFileUpload);
+addCueBtn.addEventListener('click', addCueAtCurrentTime);
+addSceneBtn.addEventListener('click', createScene);
+saveScenesBtn.addEventListener('click', saveScenesToServer);
+
+// Keyboard Control for Play/Pause
+document.addEventListener('keydown', (event) => {
+  if (event.code === 'Space') {
+    event.preventDefault(); // Prevent page scrolling
+    togglePlayPause();
+  }
+});
+
+// Initialize Users
+fetchUsers();
+
+// Timer Functions
+function updateTimer() {
+    const currentTime = wavesurfer.getCurrentTime();
+    timer.textContent = formatTimeWithMillis(currentTime);
+}
+
+function formatTimeWithMillis(time) {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    const millis = Math.floor((time % 1) * 100);
+    return `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}:${millis < 10 ? '0' + millis : millis}`;
+}
+
+// Function Definitions
+
+function togglePlayPause() {
+    if (wavesurfer && wavesurfer.isPlaying()) {
+        wavesurfer.pause();
+        playPauseBtn.textContent = 'Play';
+    } else if (wavesurfer) {
+        wavesurfer.play();
+        playPauseBtn.textContent = 'Pause';
+    }
+}
+
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (file && currentScene) {
+        const formData = new FormData();
+        formData.append('audio', file);
+
+        fetch('http://localhost:3000/upload-audio', { // Zaktualizuj URL, jeśli serwer jest na innym adresie
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.audioURL) {
+                currentScene.audioURL = data.audioURL;
+                // Inicjalizuj WaveSurfer z nowym plikiem audio
+                if (wavesurfer) {
+                    wavesurfer.destroy();
+                }
+                wavesurfer = WaveSurfer.create({
+                    container: '#waveform',
+                    waveColor: '#4F4A85',
+                    progressColor: '#383351',
+                    height: 150,
+                });
+                wavesurfer.load(data.audioURL);
+
+                wavesurfer.on('ready', () => {
+                    addTimeScale();
+                    updateTimer();
+                    currentScene.audioDuration = wavesurfer.getDuration();
+                    saveScenesToServer();
+                });
+
+                wavesurfer.on('seek', updateTimer);
+                wavesurfer.on('audioprocess', updateTimer);
+                wavesurfer.on('play', () => {
+                    playPauseBtn.textContent = 'Pause';
+                });
+                wavesurfer.on('pause', () => {
+                    playPauseBtn.textContent = 'Play';
+                });
+
+                playPauseBtn.textContent = 'Play'; // Reset button text
+            }
+        })
+        .catch(error => {
+            console.error('Błąd podczas przesyłania audio:', error);
+            alert('Wystąpił błąd podczas przesyłania pliku audio.');
+        });
+    } else {
+        alert('Proszę wybrać scenę przed przesłaniem pliku audio.');
+    }
+}
+
+function addCueAtCurrentTime() {
+    if (currentScene && wavesurfer && wavesurfer.isReady) {
+        const currentTime = wavesurfer.getCurrentTime();
+        addCue(currentTime, `Cue ${cueCount + 1}`);
+    } else {
+        alert('Proszę wybrać lub utworzyć scenę oraz załadować plik audio najpierw.');
+    }
+}
+
+function addCue(time, name) {
+    cueCount++;
+    const formattedTime = formatTimeWithMillis(time);
+    const cueId = `cue-${uuidv4()}`; // Unikalny ID za pomocą UUID
+
+    // Dodaj marker do waveform
+    const marker = document.createElement('div');
+    marker.classList.add('cue-marker');
+    marker.style.left = `${(time / wavesurfer.getDuration()) * 100}%`;
+    marker.setAttribute('data-time', time);
+    marker.setAttribute('data-id', cueId); // Przypisz ID Cue
+
+    // Dodaj etykietę nazwy Cue powyżej markera
+    const label = document.createElement('div');
+    label.classList.add('cue-label');
+    label.textContent = name;
+    marker.appendChild(label);
+
+    // Kliknięcie na marker aby wyróżnić Cue
+    marker.addEventListener('click', () => {
+        const cueElement = document.getElementById(cueId);
+        if (cueElement) {
+            cueElement.scrollIntoView({ behavior: 'smooth' });
+            cueElement.classList.add('highlight');
+            setTimeout(() => {
+                cueElement.classList.remove('highlight');
+            }, 2000);
+        }
+    });
+
+    document.getElementById('waveform').appendChild(marker);
+
+    // Dodaj do listy Cue
+    const listItem = document.createElement('li');
+    listItem.setAttribute('id', cueId);
+    listItem.innerHTML = `
+        <span>${name}</span>
+        <span>${formattedTime}</span>
+        <div>
+            <button class="edit-cue-btn" data-id="${cueId}">Edit</button>
+            <button class="remove-cue-btn" data-id="${cueId}">Remove</button>
+        </div>`;
+    cueList.appendChild(listItem);
+
+    // Obsługa usuwania Cue
+    listItem.querySelector('.remove-cue-btn').addEventListener('click', (event) => {
+        const cueId = event.target.getAttribute('data-id');
+        removeCue(cueId);
+    });
+
+    // Obsługa edycji Cue
+    listItem.querySelector('.edit-cue-btn').addEventListener('click', (event) => {
+        const cueId = event.target.getAttribute('data-id');
+        openEditCueModal(cueId);
+    });
+
+    // Dodaj Cue do aktualnej sceny
+    if (currentScene) {
+        currentScene.cues.push({
+            id: cueId,
+            time: time,
+            users: [],
+            messages: {}
+        });
+    }
+
+    // Zapisz na serwerze
+    saveScenesToServer();
+}
+
+function removeCue(cueId) {
+    // Usuń z DOM
+    const cueElement = document.getElementById(cueId);
+    if (cueElement) cueElement.remove();
+
+    // Usuń marker z waveform
+    const markerToRemove = document.querySelector(`.cue-marker[data-id="${cueId}"]`);
+    if (markerToRemove) markerToRemove.remove();
+
+    // Usuń z aktualnej sceny
+    if (currentScene) {
+        currentScene.cues = currentScene.cues.filter(cue => cue.id !== cueId);
+    }
+
+    // Zapisz na serwerze
+    saveScenesToServer();
+}
+
+function clearCues() {
+    document.querySelectorAll('.cue-marker').forEach(marker => marker.remove());
+    cueList.innerHTML = '';
+    cueCount = 0;
+    // Nie resetuj scen, aby zachować istniejące
+}
+
+function addTimeScale() {
+    const timeScale = document.getElementById('timeScale');
+    timeScale.innerHTML = ''; // Clear existing ticks
+    const duration = wavesurfer.getDuration();
+    if (!duration) return;
+    const step = 10; // Every 10 seconds
+
+    for (let i = 0; i <= duration; i += step) {
+        const tick = document.createElement('span');
+        tick.classList.add('time-tick');
+        tick.style.left = `${(i / duration) * 100}%`;
+        tick.textContent = `${Math.floor(i / 60)}:${i % 60 < 10 ? '0' + (i % 60) : i % 60}`;
+        timeScale.appendChild(tick);
+    }
+}
+
+// Scene Management
+
+function createScene() {
+    const sceneId = `scene-${uuidv4()}`;
+    const newScene = {
+        id: sceneId,
+        title: `Scene ${scenes.length + 1}`,
+        description: '',
+        audioURL: '',
+        audioDuration: 0,
+        cues: []
+    };
+    scenes.push(newScene);
+    currentScene = newScene;
+    renderScenes();
+    renderCues();
+    renderAudioForCurrentScene();
+    // Zapisz na serwerze
+    saveScenesToServer();
+}
+
+function renderScenes() {
+    sceneList.innerHTML = '';
+    scenes.forEach(scene => {
+        const listItem = document.createElement('li');
+        listItem.textContent = scene.title;
+        listItem.setAttribute('data-id', scene.id);
+        listItem.addEventListener('click', () => {
+            selectScene(scene.id);
+        });
+
+        // Dodaj przycisk usuwania sceny
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.style.backgroundColor = '#e74c3c';
+        deleteBtn.style.marginLeft = '10px';
+        deleteBtn.style.cursor = 'pointer';
+        deleteBtn.addEventListener('click', (event) => {
+            event.stopPropagation(); // Zapobiega wyborowi sceny
+            deleteScene(scene.id);
+        });
+
+        listItem.appendChild(deleteBtn);
+
+        if (currentScene && scene.id === currentScene.id) {
+            listItem.classList.add('selected');
+        }
+        sceneList.appendChild(listItem);
+    });
+}
+
+function selectScene(sceneId) {
+    currentScene = scenes.find(scene => scene.id === sceneId);
+    renderScenes();
+    renderCues();
+    renderAudioForCurrentScene();
+}
+
+function deleteScene(sceneId) {
+    if (confirm('Czy na pewno chcesz usunąć tę scenę wraz z wszystkimi jej Cue punktami?')) {
+        fetch(`http://localhost:3000/scenes/${sceneId}`, { // Zaktualizuj URL, jeśli serwer jest na innym adresie
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Odpowiedź serwera:', data);
+            // Usuń scenę z front-endu
+            scenes = scenes.filter(scene => scene.id !== sceneId);
+            if (currentScene && currentScene.id === sceneId) {
+                currentScene = scenes.length > 0 ? scenes[0] : null;
+            }
+            renderScenes();
+            renderCues();
+            if (currentScene && currentScene.audioURL) {
+                renderAudioForCurrentScene();
+            } else {
+                // Usuń waveform, jeśli nie ma aktualnej sceny
+                if (wavesurfer) {
+                    wavesurfer.destroy();
+                    wavesurfer = null;
+                }
+                clearCues();
+            }
+        })
+        .catch(error => {
+            console.error('Błąd podczas usuwania sceny:', error);
+            alert('Wystąpił błąd podczas usuwania sceny.');
+        });
+    }
+}
+
+function renderCues() {
+    cueList.innerHTML = '';
+    document.querySelectorAll('.cue-marker').forEach(marker => marker.remove());
+    cueCount = 0;
+    if (!currentScene) return;
+
+    currentScene.cues.forEach(cue => {
+        addCue(cue.time, `Cue ${cueCount + 1}`);
+    });
+}
+
+function renderAudioForCurrentScene() {
+    if (wavesurfer) {
+        wavesurfer.destroy();
+    }
+
+    if (!currentScene.audioURL) {
+        // Nie ma przypisanego pliku audio, oczekuj na użytkownika
+        return;
+    }
+
+    wavesurfer = WaveSurfer.create({
+        container: '#waveform',
+        waveColor: '#4F4A85',
+        progressColor: '#383351',
+        height: 150,
+    });
+
+    wavesurfer.load(currentScene.audioURL);
+
+    wavesurfer.on('ready', () => {
+        addTimeScale();
+        updateTimer();
+        currentScene.audioDuration = wavesurfer.getDuration();
+        saveScenesToServer();
+    });
+
+    wavesurfer.on('seek', updateTimer);
+    wavesurfer.on('audioprocess', updateTimer);
+    wavesurfer.on('play', () => {
+        playPauseBtn.textContent = 'Pause';
+    });
+    wavesurfer.on('pause', () => {
+        playPauseBtn.textContent = 'Play';
+    });
+
+    playPauseBtn.textContent = 'Play'; // Reset button text
+}
+
+// Edit Cue Modal Functions
+
+function openEditCueModal(cueId) {
+    editingCueId = cueId;
+    const cue = currentScene.cues.find(c => c.id === cueId);
+    if (!cue) return;
+
+    // Populate selected users
+    Array.from(cueUsersSelect.options).forEach(option => {
+        option.selected = cue.users.includes(option.value);
+    });
+
+    // Generate message inputs
+    generateCueMessageInputs(cue.users, cue.messages);
+
+    // Show the modal
+    editCueModal.style.display = 'block';
+
+    // Handle user selection changes
+    cueUsersSelect.onchange = () => {
+        const selectedUsers = Array.from(cueUsersSelect.selectedOptions).map(option => option.value);
+        cue.users = selectedUsers;
+        generateCueMessageInputs(selectedUsers, cue.messages);
+    };
+}
+
+function closeEditCueModal() {
+    editCueModal.style.display = 'none';
+    editingCueId = null;
+}
+
+function generateCueMessageInputs(selectedUsers, existingMessages) {
+    cueMessagesDiv.innerHTML = ''; // Clear previous inputs
+    selectedUsers.forEach(user => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <label for="message-${user}">Message for ${user}:</label>
+            <textarea id="message-${user}" data-user="${user}" rows="3">${existingMessages[user] || ''}</textarea>
+        `;
+        cueMessagesDiv.appendChild(div);
+    });
+}
+
+function saveCueEdits() {
+    if (!editingCueId || !currentScene) return;
+    const cue = currentScene.cues.find(c => c.id === editingCueId);
+    if (!cue) return;
+
+    // Update users
+    const selectedUsers = Array.from(cueUsersSelect.selectedOptions).map(option => option.value);
+    cue.users = selectedUsers;
+
+    // Update messages
+    cue.messages = {};
+    selectedUsers.forEach(user => {
+        const textarea = document.getElementById(`message-${user}`);
+        if (textarea) {
+            cue.messages[user] = textarea.value;
+        }
+    });
+
+    // Zamknij modal i zapisz zmiany na serwerze
+    closeEditCueModal();
+    saveScenesToServer();
+}
+
+// Server Communication
+
+function saveScenesToServer() {
+    fetch('http://localhost:3000/save-scenes', { // Zaktualizuj URL, jeśli serwer jest na innym adresie
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ scenes })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Odpowiedź serwera:', data);
+        // Opcjonalnie, powiadom użytkownika
+    })
+    .catch(error => {
+        console.error('Błąd podczas zapisywania scen:', error);
+    });
+}
+
+// Function to load existing scenes from server
+function loadScenesFromServer() {
+    fetch('http://localhost:3000/scenes') // Zaktualizuj URL, jeśli serwer jest na innym adresie
+    .then(response => response.json())
+    .then(data => {
+        if (data.scenes && Array.isArray(data.scenes)) {
+            scenes = data.scenes;
+            if (scenes.length > 0) {
+                currentScene = scenes[0]; // Wybierz pierwszą scenę jako aktualną
+            }
+            renderScenes();
+            renderCues();
+            if (currentScene && currentScene.audioURL) {
+                renderAudioForCurrentScene();
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Błąd podczas ładowania scen:', error);
+    });
+}
+
+// Load scenes on page load
+window.addEventListener('load', () => {
+    loadScenesFromServer();
+});
+
+// Close Modal When Clicking Outside of It
+window.onclick = function(event) {
+    if (event.target == editCueModal) {
+        closeEditCueModal();
+    }
+}
+</script>
+
+</body>
+</html>

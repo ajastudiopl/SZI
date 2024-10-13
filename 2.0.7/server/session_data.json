@@ -1,0 +1,108 @@
+{
+  "scenes": [
+    {
+      "id": "b9d04619-ef9f-4d30-ae6b-8b52beb0f802",
+      "type": "regular",
+      "title": "Scena 1",
+      "description": "",
+      "audioURL": "http://192.168.0.23:3000/uploads/1eecc258-e6fc-4771-a6db-861729e51eec.mp3",
+      "audioFileName": "Filmowa.mp3",
+      "cues": [
+        {
+          "id": "cue-04e2c093-2f8f-417e-aed1-8a69f543b17d",
+          "name": "Cue 1",
+          "time": 87.993481,
+          "users": [
+            "user1"
+          ],
+          "messages": {},
+          "urls": {},
+          "triggered": false,
+          "sceneId": "scene-6febea39-3adf-4c00-8514-9e83577ad37b"
+        },
+        {
+          "id": "cue-4a4494b0-159f-4a14-8ab2-287c7c3d949e",
+          "name": "Cue 2",
+          "time": 38.07905,
+          "users": [
+            "user1"
+          ],
+          "messages": {},
+          "urls": {},
+          "triggered": false,
+          "sceneId": "scene-6febea39-3adf-4c00-8514-9e83577ad37b"
+        },
+        {
+          "id": "cue-d1a29575-e50b-4d85-998a-0679cb946ce9",
+          "name": "Cue 3",
+          "time": 56.947048,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false,
+          "sceneId": "scene-6febea39-3adf-4c00-8514-9e83577ad37b"
+        }
+      ],
+      "cueCount": 0,
+      "duration": 161.7502,
+      "currentTime": 0.02322
+    },
+    {
+      "id": "scene-6febea39-3adf-4c00-8514-9e83577ad37b",
+      "type": "timeline",
+      "title": "Scena 1",
+      "description": "",
+      "audioURL": "http://192.168.0.23:3000/uploads/1eecc258-e6fc-4771-a6db-861729e51eec.mp3",
+      "audioFileName": "Filmowa.mp3",
+      "cues": [
+        {
+          "id": "cue-04e2c093-2f8f-417e-aed1-8a69f543b17d",
+          "name": "Cue 1",
+          "time": 72.212973,
+          "users": [
+            "user1"
+          ],
+          "messages": {},
+          "urls": {},
+          "triggered": true,
+          "sceneId": "scene-6febea39-3adf-4c00-8514-9e83577ad37b"
+        },
+        {
+          "id": "cue-4a4494b0-159f-4a14-8ab2-287c7c3d949e",
+          "name": "Cue 2",
+          "time": 38.07905,
+          "users": [
+            "user1"
+          ],
+          "messages": {},
+          "urls": {},
+          "triggered": true,
+          "sceneId": "scene-6febea39-3adf-4c00-8514-9e83577ad37b"
+        },
+        {
+          "id": "cue-d1a29575-e50b-4d85-998a-0679cb946ce9",
+          "name": "Cue 3",
+          "time": 56.947048,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": true,
+          "sceneId": "scene-6febea39-3adf-4c00-8514-9e83577ad37b"
+        }
+      ],
+      "cueCount": 0,
+      "duration": 161.7502,
+      "currentTime": 72.411311
+    }
+  ],
+  "users": [
+    {
+      "id": "user1",
+      "name": "Jan Kowalski"
+    },
+    {
+      "id": "user2",
+      "name": "Anna Nowak"
+    }
+  ]
+}

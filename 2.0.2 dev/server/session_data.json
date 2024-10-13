@@ -1,0 +1,85 @@
+{
+  "scenes": [
+    {
+      "id": null,
+      "title": "nowa",
+      "content": "",
+      "users": {
+        "user1": "Hejka",
+        "user2": "",
+        "user3": "",
+        "user4": "",
+        "user5": ""
+      },
+      "multimedia": {
+        "user1": {
+          "type": "Brak",
+          "value": ""
+        }
+      },
+      "order": 3,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true,
+        "user4": true,
+        "user5": true
+      }
+    },
+    {
+      "id": 1,
+      "title": "Zwykła scena 1",
+      "content": "",
+      "users": {},
+      "multimedia": {},
+      "order": 1
+    },
+    {
+      "id": "scene-1728691997911",
+      "title": "Scene 1",
+      "description": "",
+      "audioDuration": 285.7796,
+      "audioURL": "",
+      "cues": [
+        {
+          "id": "cue-1728692011795-1",
+          "time": 0,
+          "users": [
+            "nowy usa"
+          ],
+          "messages": {}
+        }
+      ]
+    },
+    {
+      "id": "scene-1728692129067",
+      "title": "Scene 2",
+      "description": "",
+      "audioDuration": 0,
+      "audioURL": "",
+      "cues": []
+    }
+  ],
+  "users": [
+    {
+      "id": "user1",
+      "name": "nowy usa"
+    },
+    {
+      "id": "user2",
+      "name": "Imię user2"
+    },
+    {
+      "id": "user3",
+      "name": "Imię user3"
+    },
+    {
+      "id": "user4",
+      "name": "Imię user4"
+    },
+    {
+      "id": "user5",
+      "name": ""
+    }
+  ]
+}

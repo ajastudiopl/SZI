@@ -1,0 +1,83 @@
+{
+  "scenes": [
+    {
+      "id": "scene-e75b5609-542e-4bbe-92c6-6cbe997f65b9",
+      "type": "timeline",
+      "title": "Scena 1",
+      "description": "",
+      "audioURL": "http://192.168.0.23:3000/uploads/74f4a8ec-88ce-4678-8756-514b24db59cc.mp3",
+      "audioFileName": "Ballada.mp3",
+      "cues": [
+        {
+          "id": "cue-b28028a9-7e19-47c6-bd29-f2c1191d41b4",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [
+            "user2"
+          ],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-6568d6a2-fbe5-4349-891f-03f441a4c784",
+          "name": "Cue 2",
+          "time": 46.064156,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-0b4a5ad0-66e3-4fd1-bd1e-6d8c9ed112ca",
+          "name": "Cue 3",
+          "time": 135.464985,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        }
+      ],
+      "cueCount": 0
+    },
+    {
+      "id": "scene-a3cc0855-3ee6-418f-89ed-acb93eabbeaa",
+      "type": "timeline",
+      "title": "Scena 2",
+      "description": "",
+      "audioURL": "http://192.168.0.23:3000/uploads/d7ee2c31-5cb0-4d9a-b937-d816fb7e3584.mp3",
+      "audioFileName": "Filmowa.mp3",
+      "cues": [
+        {
+          "id": "cue-a1d779ac-3868-4e51-b1b9-b6fbe1a92a99",
+          "name": "Cue 1",
+          "time": 10.977744,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-a36f7c20-be7b-4831-8255-e4c3ffafe017",
+          "name": "Cue 2",
+          "time": 22.47007,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        }
+      ],
+      "cueCount": 0
+    }
+  ],
+  "users": [
+    {
+      "id": "user1",
+      "name": "Jan Kowalski"
+    },
+    {
+      "id": "user2",
+      "name": "Anna Nowak"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "scenes": [
+    {
+      "id": null,
+      "title": "nowa",
+      "content": "",
+      "users": {
+        "user1": "Hejka",
+        "user2": "",
+        "user3": "",
+        "user4": "",
+        "user5": ""
+      },
+      "multimedia": {
+        "user1": {
+          "type": "Brak",
+          "value": ""
+        }
+      },
+      "order": 3,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true,
+        "user4": true,
+        "user5": true
+      }
+    },
+    {
+      "id": 1,
+      "title": "Zwykła scena 1",
+      "content": "",
+      "users": {},
+      "multimedia": {},
+      "order": 1
+    },
+    {
+      "id": 2,
+      "title": "Jakaś kolejna scena",
+      "content": "",
+      "users": {
+        "user1": "Adiiiiii",
+        "user2": "",
+        "user3": "",
+        "user4": "",
+        "user5": ""
+      },
+      "multimedia": {
+        "user1": {
+          "type": "Brak",
+          "value": "https://www.ajastudio.pl/ajaquiz"
+        }
+      },
+      "order": 3,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true,
+        "user4": true,
+        "user5": true
+      }
+    }
+  ],
+  "users": [
+    {
+      "id": "user1",
+      "name": "hejousi"
+    },
+    {
+      "id": "user2",
+      "name": "Imię user2"
+    },
+    {
+      "id": "user3",
+      "name": "Imię user3"
+    },
+    {
+      "id": "user4",
+      "name": "Imię user4"
+    },
+    {
+      "id": "user5",
+      "name": ""
+    }
+  ]
+}

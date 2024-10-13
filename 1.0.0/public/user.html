@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamiczny Użytkownik</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .user-bar {
+            width: 100%;
+            background-color: #f1f1f1;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 50px;
+            color: red;
+            font-weight: bold;
+            box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .content {
+            text-align: center;
+        }
+        h1 {
+            font-size: 50px;
+            font-weight: bold;
+            color: #888;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: white;
+            padding: 20px;
+            margin: 0;
+            z-index: 1000;
+        }
+        .instruction-received {
+            font-size: 80px;
+            color: #000;
+        }
+        .segment {
+            margin-top: 20px;
+            font-size: 50px;
+            color: #222;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .segment a {
+            display: block;
+            margin: 10px 0;
+            font-size: 50px;
+            color: blue;
+            text-decoration: underline;
+        }
+        .iframe-container {
+            margin-top: 30px;
+            width: 100%;
+            background-color: #f1f1f1;
+            position: relative;
+        }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            transition: height 0.5s ease;
+        }
+        .iframe-controls {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .error-message {
+            font-size: 40px;
+            color: white;
+            background-color: red;
+            font-weight: bold;
+            margin-top: 30px;
+            padding: 20px;
+            text-align: center;
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Pasek użytkownika na samej górze strony -->
+<div class="content">
+    <div class="user-bar" id="user-bar">Użytkownik</div>
+    <h1 id="instruction" class="instruction">Czekaj na instrukcje...</h1>
+
+    <div id="segment" class="segment" style="display: none;">
+        <span id="segment-content"></span>
+    </div>
+
+    <div class="iframe-container">
+        <iframe id="web-browser" src="about:blank"></iframe>
+    </div>
+
+    <!-- Kontrola rozmiaru iframe -->
+    <div class="iframe-controls">
+        <label for="iframe-height">Wysokość iframe (px):</label>
+        <input type="range" id="iframe-height" min="100" max="1000" value="600" step="50" onchange="adjustIframeHeight(this.value)">
+        <button onclick="setIframeFullScreen()">Pełny ekran</button>
+    </div>
+
+    <div id="connection-error" class="error-message">Brak połączenia z serwerem. Odśwież stronę.</div>
+</div>
+
+<script>
+// Funkcja do pobierania userId z URL
+function getUserIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('userId'); // np. 'user1'
+}
+
+// Funkcja do pobierania danych użytkownika z pliku session_data.json
+async function getUserName(userId) {
+    const apiUrl = window.location.origin + '/server/session_data.json'; // Poprawiona ścieżka do pliku JSON
+    try {
+        const response = await fetch(apiUrl); // Pobieranie danych z pliku session_data.json
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('Dane z pliku JSON:', data); // Logowanie danych JSON do debugowania
+
+        // Znajdowanie użytkownika na podstawie ID
+        const user = data.users.find(u => u.id === userId);
+        console.log('Znaleziony użytkownik:', user); // Logowanie znalezionego użytkownika
+
+        // Zwraca nazwę użytkownika lub null, jeśli użytkownik nie istnieje
+        return user && user.name ? user.name : null;
+    } catch (error) {
+        console.error('Błąd podczas pobierania danych użytkownika:', error);
+        return null;
+    }
+}
+
+// Funkcja do dynamicznego ładowania adresu URL do iframe
+function loadUrlInIframe(url) {
+    const iframe = document.getElementById('web-browser');
+    iframe.src = url || 'about:blank'; // Ustawia iframe na about:blank, jeśli URL jest pusty
+}
+
+// Inicjalizacja WebSocket po uzyskaniu adresu IP z serwera
+async function initWebSocket(userId) {
+    const serverAddress = await getServerAddress();
+    if (!serverAddress) return;
+
+    const websocket = new WebSocket(serverAddress);
+
+    websocket.onopen = function() {
+        console.log('Połączenie WebSocket otwarte.');
+        document.getElementById('connection-error').style.display = 'none';
+    };
+
+    // Obsługa wiadomości WebSocket
+    websocket.onmessage = function(event) {
+        console.log('Otrzymano wiadomość przez WebSocket:', event.data);
+        try {
+            const data = JSON.parse(event.data); // Parsowanie wiadomości JSON
+            if (data.type === 'user-instruction' && data.userId === userId) {
+                displayInstruction(data.instruction); // Wyświetlanie instrukcji
+                if (data.segmentX) {
+                    renderSegmentX(data.segmentX); // Wyświetlanie linków lub segmentów X
+                }
+                if (data.url) {
+                    loadUrlInIframe(data.url); // Załadowanie URL do iframe
+                }
+            }
+        } catch (error) {
+            console.error('Błąd przetwarzania wiadomości:', error);
+        }
+    };
+
+    websocket.onclose = function() {
+        console.log('Połączenie WebSocket zamknięte.');
+        document.getElementById('connection-error').style.display = 'block';
+    };
+
+    websocket.onerror = function(error) {
+        console.error('Błąd WebSocket:', error);
+        document.getElementById('connection-error').style.display = 'block';
+    };
+}
+
+// Funkcja do wyświetlania instrukcji
+function displayInstruction(instruction) {
+    const instructionElement = document.getElementById('instruction');
+    if (instruction) {
+        instructionElement.textContent = instruction;
+        instructionElement.classList.add('instruction-received');
+    } else {
+        instructionElement.textContent = 'Czekaj na instrukcje...';
+        instructionElement.classList.remove('instruction-received');
+    }
+}
+
+// Inicjalizacja strony po załadowaniu
+window.onload = async function() {
+    const userId = getUserIdFromUrl(); // Pobiera userId z URL
+    if (!userId) {
+        alert('Brak identyfikatora użytkownika w URL. Dodaj parametry ?userId=yourUserId');
+        return;
+    }
+
+    // Pobieranie nazwy użytkownika z serwera
+    const userName = await getUserName(userId);
+    const userBarElement = document.getElementById('user-bar');
+
+    if (userName) {
+        userBarElement.textContent = `Użytkownik: ${userName}`;
+    } else {
+        userBarElement.textContent = 'Użytkownik nieznaleziony';
+    }
+
+    // Inicjalizacja WebSocket
+    initWebSocket(userId);
+};
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamiczny Użytkownik</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            /* Domyślne kolory i czcionka */
+            background-color: #ffffff;
+            color: #000000;
+        }
+        .user-bar {
+            width: 100%;
+            background-color: #f1f1f1;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 50px;
+            color: red;
+            font-weight: bold;
+            box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .content {
+            text-align: center;
+            padding-top: 100px; /* Dodano odstęp, aby uniknąć nachodzenia na fixed header */
+        }
+        h1 {
+            font-size: 50px;
+            font-weight: bold;
+            color: #888;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: white;
+            padding: 20px;
+            margin: 0;
+            z-index: 1000;
+        }
+        .instruction-received {
+            font-size: 80px;
+            color: #000;
+        }
+        .segment {
+            margin-top: 20px;
+            font-size: 50px;
+            color: #222;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .segment a {
+            display: block;
+            margin: 10px 0;
+            font-size: 50px;
+            color: blue;
+            text-decoration: underline;
+        }
+        .iframe-container {
+            margin-top: 30px;
+            width: 100%;
+            background-color: #f1f1f1;
+            position: relative;
+        }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            transition: height 0.5s ease;
+            display: none; /* Ukryj iframe na początku */
+        }
+        .iframe-controls {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .error-message {
+            font-size: 40px;
+            color: white;
+            background-color: red;
+            font-weight: bold;
+            margin-top: 30px;
+            padding: 20px;
+            text-align: center;
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+        }
+        /* Styl dla przycisku togglingu panelu personalizacji */
+        .toggle-customization {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0px 1px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .toggle-customization:hover {
+            background-color: #007B9E;
+        }
+        /* Styl dla panelu personalizacji */
+        .customization-panel {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 800px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
+            text-align: left;
+            display: none; /* Ukryj panel na początku */
+        }
+        .customization-panel h2 {
+            margin-top: 0;
+        }
+        .customization-panel label {
+            display: block;
+            margin: 10px 0 5px;
+            font-size: 20px;
+        }
+        .customization-panel input[type="color"],
+        .customization-panel select,
+        .customization-panel input[type="range"] {
+            padding: 5px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Pasek użytkownika na samej górze strony -->
+<div class="content">
+    <div class="user-bar" id="user-bar">Użytkownik</div>
+    <h1 id="instruction" class="instruction">Czekaj na instrukcje...</h1>
+
+    <div id="segment" class="segment" style="display: none;">
+        <span id="segment-content"></span>
+    </div>
+
+    <div class="iframe-container">
+        <iframe id="web-browser" src="about:blank" allow="camera; microphone; fullscreen; autoplay"></iframe>
+    </div>
+
+    <!-- Kontrola rozmiaru iframe -->
+    <div class="iframe-controls">
+        <label for="iframe-height">Wysokość iframe (px):</label>
+        <input type="range" id="iframe-height" min="100" max="1000" value="600" step="50" onchange="adjustIframeHeight(this.value)">
+        <button onclick="setIframeFullScreen()">Pełny ekran</button>
+    </div>
+
+    <div id="connection-error" class="error-message">Brak połączenia z serwerem. Odśwież stronę.</div>
+</div>
+
+<!-- Przyciski togglingu panelu personalizacji -->
+<button class="toggle-customization" id="toggle-customization">Personalizuj Wygląd</button>
+
+<!-- Panel personalizacji -->
+<div class="customization-panel" id="customization-panel">
+    <h2>Personalizacja Wyglądu</h2>
+    <label for="background-color-picker">Kolor Tła:</label>
+    <input type="color" id="background-color-picker" value="#ffffff">
+
+    <label for="text-color-picker">Kolor Tekstu:</label>
+    <input type="color" id="text-color-picker" value="#000000">
+
+    <label for="font-size-selector">Wielkość Czcionki (px):</label>
+    <select id="font-size-selector">
+        <option value="16">16</option>
+        <option value="18">18</option>
+        <option value="20" selected>20</option>
+        <option value="24">24</option>
+        <option value="28">28</option>
+        <option value="32">32</option>
+    </select>
+</div>
+
+<script>
+// Funkcja do pobierania userId z URL
+function getUserIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('userId'); // np. 'user1'
+}
+
+// Funkcja do pobierania adresu IP z serwera
+async function getServerAddress() {
+    const apiUrl = window.location.origin + '/config';  // Zmieniono na '/config'
+    try {
+        const response = await fetch(apiUrl);  // Pobiera dane z '/config'
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return `ws://${data.serverIP}:8080`;  // Zwraca pełny adres WebSocket
+    } catch (error) {
+        console.error('Błąd podczas pobierania adresu IP serwera:', error);
+        document.getElementById('connection-error').style.display = 'block';
+        return null;
+    }
+}
+
+// Funkcja do pobierania danych użytkownika z serwera
+async function getUserName(userId) {
+    const apiUrl = window.location.origin + '/users';  // Zmieniono na '/users'
+    try {
+        const response = await fetch(apiUrl);  // Pobieranie danych użytkownika
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const user = data.users.find(u => u.id === userId);  // Znajdź użytkownika po ID
+        return user ? user.name : null;  // Zwraca nazwę użytkownika
+    } catch (error) {
+        console.error('Błąd podczas pobierania nazwy użytkownika:', error);
+        return null;
+    }
+}
+
+// Inicjalizacja WebSocket po uzyskaniu adresu IP z serwera
+async function initWebSocket(userId) {
+    const serverAddress = await getServerAddress();
+    if (!serverAddress) return;
+
+    const websocket = new WebSocket(serverAddress);
+
+    websocket.onopen = function() {
+        console.log('Połączenie WebSocket otwarte.');
+        document.getElementById('connection-error').style.display = 'none';
+    };
+
+    // Obsługa wiadomości WebSocket
+    websocket.onmessage = function(event) {
+        console.log('Otrzymano wiadomość przez WebSocket:', event.data);
+        try {
+            const data = JSON.parse(event.data); // Parsowanie wiadomości JSON
+            if (data.type === 'user-instruction' && data.userId === userId) {
+                displayInstruction(data.instruction); // Wyświetlanie instrukcji
+                if (data.segmentX) {
+                    renderSegmentX(data.segmentX); // Wyświetlanie linków lub segmentów X
+                }
+                if (data.url) {
+                    loadUrlInIframe(data.url); // Załadowanie URL do iframe
+                }
+            }
+        } catch (error) {
+            console.error('Błąd przetwarzania wiadomości:', error);
+        }
+    };
+
+    websocket.onclose = function() {
+        console.log('Połączenie WebSocket zamknięte.');
+        document.getElementById('connection-error').style.display = 'block';
+    };
+
+    websocket.onerror = function(error) {
+        console.error('Błąd WebSocket:', error);
+        document.getElementById('connection-error').style.display = 'block';
+    };
+}
+
+// Funkcja do wyświetlania instrukcji
+function displayInstruction(instruction) {
+    const instructionElement = document.getElementById('instruction');
+    if (instruction) {
+        instructionElement.textContent = instruction;
+        instructionElement.classList.add('instruction-received');
+    } else {
+        instructionElement.textContent = 'Czekaj na instrukcje...';
+        instructionElement.classList.remove('instruction-received');
+    }
+}
+
+// Funkcja do wyświetlania segmentu X
+function renderSegmentX(segmentXData) {
+    const segmentDiv = document.getElementById('segment-content');
+    segmentDiv.innerHTML = '';
+    if (segmentXData && (segmentXData.links || segmentXData.url)) {
+        document.getElementById('segment').style.display = 'block';
+        if (segmentXData.links) {
+            segmentXData.links.forEach(link => {
+                const linkElement = document.createElement('a');
+                linkElement.href = link.url;
+                linkElement.textContent = link.label;
+                linkElement.target = '_blank';
+                segmentDiv.appendChild(linkElement);
+            });
+        }
+    } else {
+        document.getElementById('segment').style.display = 'none';
+    }
+}
+
+// Funkcja do ładowania adresu URL w iframe
+function loadUrlInIframe(url) {
+    const iframe = document.getElementById('web-browser');
+    iframe.src = url || 'about:blank';
+    iframe.style.display = 'block'; // Pokaż iframe po załadowaniu URL
+}
+
+// Funkcja do dynamicznego dostosowania wysokości iframe
+function adjustIframeHeight(value) {
+    const iframe = document.getElementById('web-browser');
+    iframe.style.height = `${value}px`;
+}
+
+// Funkcja do ustawienia iframe na pełny ekran
+function setIframeFullScreen() {
+    const iframe = document.getElementById('web-browser');
+    if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+    } else if (iframe.mozRequestFullScreen) { // Firefox
+        iframe.mozRequestFullScreen();
+    } else if (iframe.webkitRequestFullscreen) { // Chrome, Safari and Opera
+        iframe.webkitRequestFullscreen();
+    } else if (iframe.msRequestFullscreen) { // IE/Edge
+        iframe.msRequestFullscreen();
+    }
+}
+
+// Funkcje personalizacji
+
+// Funkcja do ustawiania koloru tła
+function setBackgroundColor(color) {
+    document.body.style.backgroundColor = color;
+    localStorage.setItem('backgroundColor', color);
+}
+
+// Funkcja do ustawiania koloru tekstu
+function setTextColor(color) {
+    document.body.style.color = color;
+    // Aktualizacja kolorów specyficznych elementów
+    document.querySelectorAll('.user-bar, .instruction, .segment, .segment a').forEach(element => {
+        if (element.classList.contains('instruction-received')) {
+            element.style.color = '#000000';
+        } else if (element.tagName.toLowerCase() === 'a') {
+            element.style.color = 'blue'; // Możesz dostosować lub dodać opcje dla użytkownika
+        } else {
+            element.style.color = color;
+        }
+    });
+    localStorage.setItem('textColor', color);
+}
+
+// Funkcja do ustawiania wielkości czcionki
+function setFontSize(size) {
+    document.body.style.fontSize = `${size}px`;
+    localStorage.setItem('fontSize', size);
+}
+
+// Funkcja do ładowania ustawień z localStorage
+function loadCustomizationSettings() {
+    const backgroundColor = localStorage.getItem('backgroundColor');
+    const textColor = localStorage.getItem('textColor');
+    const fontSize = localStorage.getItem('fontSize');
+
+    if (backgroundColor) {
+        setBackgroundColor(backgroundColor);
+        document.getElementById('background-color-picker').value = backgroundColor;
+    }
+
+    if (textColor) {
+        setTextColor(textColor);
+        document.getElementById('text-color-picker').value = textColor;
+    }
+
+    if (fontSize) {
+        setFontSize(fontSize);
+        document.getElementById('font-size-selector').value = fontSize;
+    }
+}
+
+// Event listeners dla panelu personalizacji
+document.getElementById('background-color-picker').addEventListener('input', function() {
+    setBackgroundColor(this.value);
+});
+
+document.getElementById('text-color-picker').addEventListener('input', function() {
+    setTextColor(this.value);
+});
+
+document.getElementById('font-size-selector').addEventListener('change', function() {
+    setFontSize(this.value);
+});
+
+// Funkcja do togglingu panelu personalizacji
+function toggleCustomizationPanel() {
+    const panel = document.getElementById('customization-panel');
+    const button = document.getElementById('toggle-customization');
+    if (panel.style.display === 'none' || panel.style.display === '') {
+        panel.style.display = 'block';
+        button.textContent = 'Zamknij Personalizację';
+    } else {
+        panel.style.display = 'none';
+        button.textContent = 'Personalizuj Wygląd';
+    }
+}
+
+// Event listener dla przycisku togglingu
+document.getElementById('toggle-customization').addEventListener('click', toggleCustomizationPanel);
+
+// Inicjalizacja ustawień personalizacji po załadowaniu strony
+window.onload = async function() {
+    const userId = getUserIdFromUrl(); // Pobiera userId z URL
+    if (!userId) {
+        alert('Brak identyfikatora użytkownika w URL. Dodaj parametry ?userId=yourUserId');
+        return;
+    }
+    const userName = await getUserName(userId);  // Pobiera nazwę użytkownika z serwera
+
+    // Ustawienie tytułu strony i paska użytkownika
+    if (userName) {
+        document.title = `User ${userId} = ${userName}`;  // Tytuł z nazwą użytkownika
+        document.getElementById('user-bar').textContent = `${userName}`;
+    } else {
+        document.getElementById('user-bar').textContent = `User ${userId}`;
+    }
+
+    console.log(`Strona załadowana dla: ${userId}`);
+    initWebSocket(userId);  // Inicjalizacja WebSocket po załadowaniu strony
+
+    // Załaduj ustawienia personalizacji
+    loadCustomizationSettings();
+};
+</script>
+
+</body>
+</html>

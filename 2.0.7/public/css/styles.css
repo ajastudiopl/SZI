@@ -1,0 +1,350 @@
+/* Resetowanie podstawowych stylów (opcjonalnie możesz użyć reset.css) */
+
+h1 {
+    /* Usunięto text-align: center; */
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 80px; /* Dostosowane do fixed toolbar */
+}
+
+.scene-list, .user-list {
+    margin-top: 20px;
+}
+
+.scene, .user-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 5px 0;
+    position: relative;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.remove-scene, .edit-appearance, .edit-scene, .copy-scene {
+    position: absolute;
+    top: 5px;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+}
+
+.edit-appearance {
+    right: 110px;
+    background-color: blue;
+}
+
+.edit-scene {
+    right: 150px;
+    background-color: green;
+}
+
+.copy-scene {
+    right: 70px;
+    background-color: orange;
+}
+
+.remove-scene {
+    right: 30px;
+    background-color: red;
+}
+
+.user-content {
+    margin-top: 10px;
+}
+
+.tabs {
+    overflow: hidden;
+    background: white;
+    margin-top: 60px; /* Dostosowane do toolbar */
+    border-bottom: 2px solid red;
+}
+
+.tabs button {
+    background-color: white;
+    color: red;
+    float: left;
+    border: none;
+    outline: none;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 17px;
+    border-bottom: 2px solid transparent;
+}
+
+.tabs button:hover {
+    background-color: #f1f1f1;
+}
+
+.tabs button.active {
+    background-color: red;
+    color: white;
+    border-bottom: 2px solid white;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.toolbar {
+    position: fixed; /* Fixed at the top */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between; /* Changed from center to space-between */
+    align-items: center; /* Center items vertically */
+    background-color: white;
+    border-bottom: 1px solid #ccc;
+    padding: 10px 20px; /* Added vertical padding */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.toolbar button {
+    font-size: 24px;
+    padding: 10px 30px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.toolbar button:hover {
+    background-color: darkred;
+}
+
+.toolbar h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.scene-title, .scene-content {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.scene-title {
+    height: 30px;
+    font-size: 16px;
+}
+
+.user-content-editor {
+    margin-top: 10px;
+}
+
+.user-content-editor textarea,
+.user-content-editor input[type="text"],
+.user-content-editor select {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 5px;
+}
+
+.user-content-editor button {
+    display: block;
+    margin-top: 5px;
+}
+
+/* Style for "Edit Scenes" button */
+.edit-scenes-button {
+    background-color: blue;
+    color: white;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Updated styles for modal editing window */
+#editSceneModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding-top: 60px; /* Padding to prevent content from hiding behind fixed header */
+}
+
+/* Fixed header inside the modal */
+#editSceneModal .modal-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    padding: 10px 20px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#editSceneModal .modal-header h2,
+#editSceneModal .modal-header input {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+    flex-grow: 1;
+    text-align: center;
+}
+
+#editSceneModal .modal-header input {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    width: 30%;
+    margin-left: 10px;
+}
+
+#editSceneModal .modal-header button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    margin: 0 5px;
+    font-size: 16px;
+}
+
+/* Container for user content */
+#edit-scene-users {
+    margin-top: 70px;
+    padding: 0 20px;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.user-content-editor > div {
+    width: 45%;
+    max-width: 500px;
+    margin: 10px;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-content-editor h3 {
+    margin-top: 0;
+    cursor: pointer;
+}
+
+.user-content-editor label {
+    display: block;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* Close modal button */
+.close-modal {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1002;
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Styles for scene appearance editing modal */
+#editSceneAppearanceModal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+#editSceneAppearanceModal .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 800px;
+    border-radius: 5px;
+}
+
+#editSceneAppearanceModal .close-modal {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+#editSceneAppearanceModal .close-modal:hover,
+#editSceneAppearanceModal .close-modal:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#appearance-options {
+    margin-top: 20px;
+}
+
+#appearance-options label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+#appearance-options input[type="range"] {
+    width: 100%;
+}
+
+/* Adjusted Style for "Send to many" button */
+.send-to-many-button {
+    background-color: blue;
+    color: white;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    /* Removed width: 100%; */
+    text-align: center;
+}
+
+/* Additional styles for scene preview */
+#scene-preview h1 {
+    /* Optional styles */
+}
+
+#scene-preview div {
+    /* Optional styles */
+}

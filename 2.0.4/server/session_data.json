@@ -1,0 +1,1174 @@
+{
+  "scenes": [
+    {
+      "id": "scene-1add3647-2632-4a51-b225-de41485914a8",
+      "title": "Scena 1",
+      "description": "",
+      "audioURL": "",
+      "audioDuration": 0,
+      "cues": []
+    },
+    {
+      "id": "37275536-dac7-490f-ad27-e7730215c7cd",
+      "type": "regular",
+      "title": "Scena 1",
+      "description": "",
+      "audioURL": "",
+      "audioDuration": 0,
+      "cues": [
+        {
+          "id": "cue-5ad7032b-a8cd-4169-a8ee-98a3bf173ee5",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-ecdffe41-a38c-4b4a-8b24-c984bb190eca",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-4670721c-8baf-4833-bea5-340a9d155577",
+          "name": "Cue 3",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-deb11c76-93a3-45e6-a594-1645f6732c7a",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-9ccd37c8-2eda-4fa9-9d41-fee2dc7a0578",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-cd4256af-b5dd-4a02-bb10-7b533c8ac884",
+          "name": "Cue 3",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-42681eeb-dbe5-4717-a10e-4cf41cfd5919",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-a6687286-2f91-4ca5-a863-91e36085f9bd",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-b7b710b6-b970-4392-a667-f503e7394dae",
+          "name": "Cue 3",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-b3f34e2a-6038-4384-87d2-b18c073f3244",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-1c59ec8e-ef26-46d2-bb9f-87f37e9b9953",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-bc9f60db-7176-4cf9-88ab-5c73170edb74",
+          "name": "Cue 3",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-c66fb347-10f2-489e-859a-d5caad18fbaf",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-f9fe626f-7c33-4192-af79-32a4375466cc",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-2a9d02b6-6fcc-4f8b-8bf6-721b4e63c51f",
+          "name": "Cue 3",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-7f7bf2d6-7822-4f00-a78c-65603e76d4be",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-6001951d-5b32-45e7-bb5d-0cc12e57f7d1",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-5ea1fc9a-e88a-4554-9459-c2254b904fd3",
+          "name": "Cue 3",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-ddaa95e0-85b8-40a0-91c8-5417224f09c4",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-09bd40ac-7633-4aed-bc13-8f016a30e741",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-6444d6a7-6ff6-4a16-9c35-5a588f96958c",
+          "name": "Cue 3",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-9dbc48d4-bbf3-41d5-bd8f-90dfab4df6cb",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-e3d31e4b-e68b-421a-89d0-59a35312f705",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-694ee103-1624-47b2-ab6a-0bf2f7506089",
+          "name": "Cue 3",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        }
+      ]
+    },
+    {
+      "id": "ff32bc0d-0fa1-48d9-b86a-13ff28c8c24f",
+      "type": "regular",
+      "title": "Scena 2",
+      "description": "",
+      "audioURL": "",
+      "audioDuration": 0,
+      "cues": [
+        {
+          "id": "cue-1251d3a0-ee28-4623-a523-8676c4820a76",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-92751e40-4f61-4193-879d-87bfdbe13ef9",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-0e410ea7-6c23-4a34-b00f-73c5f0ac1ddd",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-472f60ff-ad54-42bd-8531-64cb11e6fdc7",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        }
+      ]
+    },
+    {
+      "id": "scene-3516185d-b194-4c65-9824-de9679b716ff",
+      "type": "timeline",
+      "title": "Scena 2",
+      "description": "",
+      "audioURL": "",
+      "audioDuration": 0,
+      "cues": [
+        {
+          "id": "cue-1251d3a0-ee28-4623-a523-8676c4820a76",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-92751e40-4f61-4193-879d-87bfdbe13ef9",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-0e410ea7-6c23-4a34-b00f-73c5f0ac1ddd",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-472f60ff-ad54-42bd-8531-64cb11e6fdc7",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-da137dc0-4309-4d66-8aca-edcf03e1795f",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-62175adf-c2ce-4935-9847-0f09893c83c4",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-edb9e21d-7456-442d-b7ac-031d219e7b1a",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-b924b592-2ad2-44af-8a27-eac4845ca824",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-78597eb0-d034-40ce-b860-3ddd5d1756e0",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-4631d635-d8eb-4877-827a-aa404d767f8b",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-aca37683-eb3b-4132-93a4-1728dc9e93d2",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-e61289a4-e8ba-4e41-80fa-589e5afd5741",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-6ffc3a03-b4f4-4b1b-a771-0aa861bffa1a",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-6d3a83a1-1c1e-4bcb-942f-6c83215fd463",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-0207f24e-ece1-461f-b5e8-17c266d1112c",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-2eb21c63-a2dd-4236-9075-d13503f59588",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-a7e031a4-90c8-4995-9048-744cf5aa637a",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-caaadc4e-a0bf-43f2-8a90-41c651e2830f",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-5fbd7172-9de3-4369-a30d-7a5038eb8609",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-d41e9ba2-b450-43df-9744-cea214f1e1ee",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-c08a33b7-83e5-4531-a3e1-ab448644cb3b",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-8e790885-f8f9-4cf3-969d-74574036e48c",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-5ac11486-8bdd-4a94-801b-5a1e98353f21",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-7599b830-769a-4cc1-bfcf-5f47934c04fc",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-90cc0a4b-fee1-4295-ac1d-39818ed47d14",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-a732b1f0-b576-423d-8eb5-4701ba5cfe8c",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-cc07e727-191a-4481-bcde-83c4667c329f",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-65306eb2-ac1c-49a9-817b-45cc2fdaa447",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-1b9473fa-c091-4f86-b0b4-3df439d7373b",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-187b2246-8f7a-4c46-b549-6b3eabcaf507",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-dbb7d1b7-66c1-4ca3-a5fe-f4ceb145fa30",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-c0507db0-019a-450c-948e-17cf8da20c55",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-af077ec0-e050-460c-ac6d-db2b53acd564",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-13b3fd66-34c3-4768-a35f-0122ea00bafa",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-c9051f4a-8575-47f3-bad7-60951c317d63",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-5cf8ec85-f0fe-42cc-ac33-86932d587b3a",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-dd0bebd0-be1b-4a75-bf30-81db1b713409",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-288a5c2e-a14d-48c4-ad1c-c18ca30dba58",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-5b58873a-7411-4557-bd4f-e5a12b8f1486",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-4cf800bd-23e6-434b-b166-71150e203821",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-59e9e8a5-5453-43b5-b86b-155157a160b7",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-4b530467-b735-49a6-9ed2-23f888f84ec7",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-6f444f6e-8087-48bd-839e-d4e38768d585",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-a164f5c1-e898-42ef-8124-c5a38e32c6e1",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-f6fbe91b-b05d-4340-9091-6e6cfd749ab9",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-79bc6284-f843-4f74-8862-a77d79046286",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        }
+      ]
+    },
+    {
+      "id": "85e42475-1122-42d4-8bda-c43d43b7a1a5",
+      "type": "regular",
+      "title": "Scena 2",
+      "description": "",
+      "audioURL": "",
+      "audioDuration": 0,
+      "cues": [
+        {
+          "id": "cue-1251d3a0-ee28-4623-a523-8676c4820a76",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-92751e40-4f61-4193-879d-87bfdbe13ef9",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-0e410ea7-6c23-4a34-b00f-73c5f0ac1ddd",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-472f60ff-ad54-42bd-8531-64cb11e6fdc7",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-da137dc0-4309-4d66-8aca-edcf03e1795f",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-62175adf-c2ce-4935-9847-0f09893c83c4",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-edb9e21d-7456-442d-b7ac-031d219e7b1a",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-b924b592-2ad2-44af-8a27-eac4845ca824",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-78597eb0-d034-40ce-b860-3ddd5d1756e0",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-4631d635-d8eb-4877-827a-aa404d767f8b",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-aca37683-eb3b-4132-93a4-1728dc9e93d2",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-e61289a4-e8ba-4e41-80fa-589e5afd5741",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-6ffc3a03-b4f4-4b1b-a771-0aa861bffa1a",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-6d3a83a1-1c1e-4bcb-942f-6c83215fd463",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-0207f24e-ece1-461f-b5e8-17c266d1112c",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-2eb21c63-a2dd-4236-9075-d13503f59588",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-a7e031a4-90c8-4995-9048-744cf5aa637a",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-caaadc4e-a0bf-43f2-8a90-41c651e2830f",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-5fbd7172-9de3-4369-a30d-7a5038eb8609",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-d41e9ba2-b450-43df-9744-cea214f1e1ee",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-c08a33b7-83e5-4531-a3e1-ab448644cb3b",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-8e790885-f8f9-4cf3-969d-74574036e48c",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-5ac11486-8bdd-4a94-801b-5a1e98353f21",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-7599b830-769a-4cc1-bfcf-5f47934c04fc",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-90cc0a4b-fee1-4295-ac1d-39818ed47d14",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-a732b1f0-b576-423d-8eb5-4701ba5cfe8c",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-cc07e727-191a-4481-bcde-83c4667c329f",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-65306eb2-ac1c-49a9-817b-45cc2fdaa447",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-1b9473fa-c091-4f86-b0b4-3df439d7373b",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-187b2246-8f7a-4c46-b549-6b3eabcaf507",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-dbb7d1b7-66c1-4ca3-a5fe-f4ceb145fa30",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-c0507db0-019a-450c-948e-17cf8da20c55",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-af077ec0-e050-460c-ac6d-db2b53acd564",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-13b3fd66-34c3-4768-a35f-0122ea00bafa",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-c9051f4a-8575-47f3-bad7-60951c317d63",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-5cf8ec85-f0fe-42cc-ac33-86932d587b3a",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-dd0bebd0-be1b-4a75-bf30-81db1b713409",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-288a5c2e-a14d-48c4-ad1c-c18ca30dba58",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-5b58873a-7411-4557-bd4f-e5a12b8f1486",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-4cf800bd-23e6-434b-b166-71150e203821",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-59e9e8a5-5453-43b5-b86b-155157a160b7",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-4b530467-b735-49a6-9ed2-23f888f84ec7",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-6f444f6e-8087-48bd-839e-d4e38768d585",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-a164f5c1-e898-42ef-8124-c5a38e32c6e1",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-f6fbe91b-b05d-4340-9091-6e6cfd749ab9",
+          "name": "Cue 1",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        },
+        {
+          "id": "cue-79bc6284-f843-4f74-8862-a77d79046286",
+          "name": "Cue 2",
+          "time": 0,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false
+        }
+      ]
+    },
+    {
+      "id": "c230dc0b-1737-4f3c-a52e-9720836f8ef9",
+      "type": "regular",
+      "title": "Scena 1",
+      "description": "",
+      "audioFile": "Filmowa.mp3",
+      "cues": [
+        {
+          "id": "cue-896ea92a-a656-4658-8a0b-685f0aad7c96",
+          "name": "Cue 1",
+          "time": 47.765159,
+          "users": [
+            "user2"
+          ],
+          "messages": "tojestwiadomosczzzzzCUE",
+          "urls": {},
+          "triggered": true
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": "user1",
+      "name": "hejousi"
+    },
+    {
+      "id": "user2",
+      "name": "Imię user2"
+    },
+    {
+      "id": "user3",
+      "name": "Imię user3"
+    },
+    {
+      "id": "user4",
+      "name": "Imię user4"
+    },
+    {
+      "id": "user5",
+      "name": ""
+    }
+  ]
+}

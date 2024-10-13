@@ -1,0 +1,91 @@
+{
+  "scenes": [
+    {
+      "id": "scene-cecd8cf6-6e31-4190-a0ed-cbe4cfbde5d0",
+      "type": "regular",
+      "title": "Nowa scena regular 1",
+      "content": "",
+      "users": {
+        "user1": "treść dla user1",
+        "user2": "",
+        "user3": ""
+      },
+      "multimedia": {},
+      "order": 1,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true
+      }
+    },
+    {
+      "id": "scene-b6cd6810-1856-482b-a2f7-ffafcaf83c62",
+      "type": "timeline",
+      "title": "Scena 1",
+      "description": "",
+      "audioURL": "http://192.168.16.78:3000/uploads/0f1083eb-a5f2-4701-940b-c982e044bd6b.mp3",
+      "audioFileName": "Filmowa.mp3",
+      "cues": [
+        {
+          "id": "cue-6287dffa-8126-4dc0-baff-ab7e96030d97",
+          "name": "Cue 1",
+          "time": 2.24,
+          "users": [
+            "user2"
+          ],
+          "messages": {
+            "user2": "Treść do user2 w cue1"
+          },
+          "urls": {
+            "user2": ""
+          },
+          "triggered": false,
+          "sceneId": "scene-b6cd6810-1856-482b-a2f7-ffafcaf83c62"
+        },
+        {
+          "id": "cue-f6ea9056-4f83-4556-8b62-970b88263529",
+          "name": "Cue 2",
+          "time": 6.05,
+          "users": [
+            "user1"
+          ],
+          "messages": {
+            "user1": "Treść do user1 w cue2"
+          },
+          "urls": {
+            "user1": ""
+          },
+          "triggered": false,
+          "sceneId": "scene-b6cd6810-1856-482b-a2f7-ffafcaf83c62"
+        },
+        {
+          "id": "cue-9dd4d555-c199-48d7-9b15-dab1869f7d12",
+          "name": "Cue 3",
+          "time": 10.76839,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false,
+          "sceneId": "scene-b6cd6810-1856-482b-a2f7-ffafcaf83c62"
+        }
+      ],
+      "cueCount": 0,
+      "duration": 161.7502,
+      "currentTime": 0
+    }
+  ],
+  "users": [
+    {
+      "id": "user1",
+      "name": "Testowy user1"
+    },
+    {
+      "id": "user2",
+      "name": "Testowy user2"
+    },
+    {
+      "id": "user3",
+      "name": "Tewstowy user3"
+    }
+  ]
+}

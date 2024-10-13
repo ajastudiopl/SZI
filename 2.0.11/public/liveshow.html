@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Show</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 100px auto 0 auto;
+            position: relative;
+        }
+        .scene-list {
+            margin-top: 20px;
+        }
+        .scene-item {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .scene-item:hover {
+            background-color: lightgray;
+        }
+        .active-scene {
+            animation: pulse 1s infinite;
+        }
+        .next-scene .next-arrow {
+            display: block;
+        }
+        .arrow {
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: green;
+            display: none;
+        }
+        .next-scene .arrow {
+            display: block;
+        }
+        .scene-description {
+            font-style: italic;
+            color: gray;
+            margin-top: 5px;
+        }
+
+        /* Styl przycisków */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 10px;
+            background-color: white;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .back-button, .stop-button {
+            padding: 15px 30px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .back-button:hover, .stop-button:hover {
+            background-color: darkred;
+        }
+
+        /* Pozycjonowanie przycisków */
+        .back-button {
+            margin: 0 auto;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .stop-button {
+            margin-left: auto;
+        }
+
+        @keyframes pulse {
+            0% {
+                background-color: white;
+            }
+            50% {
+                background-color: lightcoral;
+            }
+            100% {
+                background-color: white;
+            }
+        }
+
+        .scene-list {
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Kontenery przycisków na górze -->
+<div class="button-container">
+    <!-- Przycisk powrotu do trybu edycji -->
+    <button class="back-button" onclick="goBackToEdit()">Powrót do trybu edycji</button>
+    <!-- Przycisk STOP -->
+    <button class="stop-button" onclick="resetScenes()">Reset</button> 
+</div>
+
+<div class="container">
+    <h1>Live Show</h1>
+    
+    <!-- Lista scen -->
+    <div class="scene-list" id="scene-list">
+        <!-- Elementy sceny zostaną dodane dynamicznie -->
+    </div>
+</div>
+
+<script>
+    let scenes = [];
+    let currentSceneIndex = -1;
+    let lastSelectedScene = null; // Zmienna do przechowywania ostatnio wybranej sceny
+    let websocket;
+    let resendInterval;
+
+// Automatyczne wykrywanie adresu IP serwera na podstawie adresu hosta
+let apiUrl = `http://${window.location.hostname}:3000`;
+
+// Funkcja do pobierania konfiguracji z serwera
+async function loadConfig() {
+    try {
+        const response = await fetch('/config');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        serverIP = data.serverIP || 'localhost';
+        console.log('Adres IP serwera:', serverIP);
+    } catch (error) {
+        console.error('Błąd podczas pobierania konfiguracji:', error);
+        alert('Nie udało się pobrać konfiguracji serwera. Upewnij się, że serwer jest uruchomiony.');
+    }
+}
+
+// Pobieranie scen z serwera
+async function loadScenesFromServer() {
+    try {
+        const response = await fetch(`http://${serverIP}:3000/load`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        scenes = data.scenes || [];
+        renderSceneList();
+    } catch (error) {
+        console.error('Błąd podczas ładowania danych z serwera:', error);
+        alert('Nie udało się załadować scen. Upewnij się, że serwer jest uruchomiony i dostępny.');
+    }
+}
+
+// Renderowanie listy scen
+function renderSceneList() {
+    const sceneListDiv = document.getElementById('scene-list');
+    sceneListDiv.innerHTML = '';
+
+    scenes.forEach((scene, index) => {
+        const sceneDiv = document.createElement('div');
+        sceneDiv.classList.add('scene-item');
+        sceneDiv.innerHTML = `<span class="arrow">→</span> ${scene.order}. ${scene.title} <div class="scene-description">${scene.content || 'Brak opisu'}</div>`;
+        sceneDiv.onclick = () => selectScene(index);
+
+        if (index === currentSceneIndex) {
+            sceneDiv.classList.add('active-scene');
+        }
+        if (index === currentSceneIndex + 1) {
+            sceneDiv.classList.add('next-scene');
+        }
+
+        sceneListDiv.appendChild(sceneDiv);
+    });
+}
+
+// Wybór sceny i wysyłanie danych przez WebSocket do odpowiednich użytkowników
+function selectScene(index) {
+    currentSceneIndex = index;
+    renderSceneList();
+
+    const selectedScene = scenes[index];
+
+    // Sprawdzenie, czy WebSocket jest otwarty
+    if (websocket.readyState !== WebSocket.OPEN) {
+        console.error('WebSocket nie jest otwarty. Status:', websocket.readyState);
+        return; // Zatrzymaj funkcję, jeśli WebSocket nie jest otwarty
+    }
+
+    // Wysyłanie informacji do użytkowników przez WebSocket
+    Object.keys(selectedScene.users).forEach(userId => {
+        const message = {
+            type: 'user-instruction',
+            userId: userId,  // user1, user2, itd.
+            instruction: selectedScene.users[userId] || '',  // Domyślny tekst jeśli brak treści
+            url: selectedScene.multimedia[userId]?.value || 'about:blank'  // Pusty URL dla iframe jeśli brak wartości
+        };
+
+        websocket.send(JSON.stringify(message)); 
+        console.log('Wysłano wiadomość przez WebSocket:', message);
+    });
+}
+
+// Funkcja do powtarzania wiadomości co 3 sekundy
+function startResendInterval() {
+    // Zatrzymaj istniejący interwał, jeśli istnieje
+    if (resendInterval) {
+        clearInterval(resendInterval);
+    }
+
+    // Ustaw nowy interwał powtarzania wiadomości co 3 sekundy
+    resendInterval = setInterval(() => {
+        if (lastSelectedScene && websocket.readyState === WebSocket.OPEN) {
+            Object.keys(lastSelectedScene.users).forEach(userId => {
+                const message = {
+                    type: 'user-instruction',
+                    userId: userId,
+                    instruction: lastSelectedScene.users[userId] || '' // Wysyłaj tylko treść, bez URL
+                };
+                websocket.send(JSON.stringify(message));
+                console.log('Powtarzanie wiadomości dla:', userId, 'z treścią:', message);
+            });
+        }
+    }, 3000); // Powtarzanie co 3 sekundy
+}
+
+function selectScene(index) {
+    currentSceneIndex = index;
+    renderSceneList();
+
+    const selectedScene = scenes[index];
+    lastSelectedScene = selectedScene; // Zapisz wybraną scenę jako ostatnią
+
+    // Sprawdzenie, czy WebSocket jest otwarty
+    if (websocket.readyState !== WebSocket.OPEN) {
+        console.error('WebSocket nie jest otwarty. Status:', websocket.readyState);
+        return; // Zatrzymaj funkcję, jeśli WebSocket nie jest otwarty
+    }
+
+    // Wysyłanie informacji do użytkowników przez WebSocket
+    Object.keys(selectedScene.users).forEach(userId => {
+        const message = {
+            type: 'user-instruction',
+            userId: userId,  // user1, user2, itd.
+            instruction: selectedScene.users[userId] || '',  // Domyślny tekst jeśli brak treści
+            url: selectedScene.multimedia[userId]?.value || 'about:blank'  // Pusty URL dla iframe jeśli brak wartości
+        };
+
+        websocket.send(JSON.stringify(message)); 
+        console.log('Wysłano wiadomość przez WebSocket:', message);
+    });
+
+    // Uruchom powtarzanie wiadomości co 3 sekundy
+    startResendInterval();
+}
+
+function resetScenes() {
+    currentSceneIndex = -1;
+    renderSceneList();
+    lastSelectedScene = null;
+    clearInterval(resendInterval); // Zatrzymaj powtarzanie wiadomości
+
+    // Wysłanie wiadomości resetującej do użytkowników
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+        scenes.forEach(scene => {
+            Object.keys(scene.users).forEach(userId => {
+                const resetMessage = {
+                    type: 'user-instruction',
+                    userId: userId,
+                    instruction: '',  // Pusty tekst dla użytkownika
+                    url: 'about:blank' // Pusty iframe dla użytkownika
+                };
+                websocket.send(JSON.stringify(resetMessage));
+                console.log('Wysłano wiadomość reset dla użytkownika:', userId);
+            });
+        });
+    }
+}
+
+// Przejdź do trybu edycji
+function goBackToEdit() {
+    window.location.href = 'editmode.html';
+}
+
+// Inicjalizacja strony: pobranie konfiguracji, scen i nawiązanie połączenia WebSocket
+window.onload = async function() {
+    await loadConfig();
+    await loadScenesFromServer();
+
+    // Nawiązywanie połączenia WebSocket
+    try {
+        websocket = new WebSocket(`ws://${serverIP}:8080`);
+
+        websocket.onopen = function() {
+            console.log('Połączenie WebSocket otwarte.');
+        };
+
+        websocket.onmessage = function(event) {
+            console.log('Otrzymano wiadomość z serwera:', event.data);
+        };
+
+        websocket.onclose = function() {
+            console.log('Połączenie WebSocket zamknięte.');
+        };
+
+        websocket.onerror = function(error) {
+            console.error('Błąd WebSocket:', error);
+        };
+    } catch (error) {
+        console.error('Błąd podczas nawiązywania połączenia WebSocket:', error);
+        alert('Nie udało się nawiązać połączenia WebSocket.');
+    }
+};
+
+document.addEventListener('keydown', function(event) {
+    if (event.code === 'Space') {
+        if (currentSceneIndex + 1 < scenes.length) {
+            selectScene(currentSceneIndex + 1);
+        }
+    }
+    if (event.code === 'Backquote') {
+        goBackToEdit();
+    }
+});
+</script>
+
+</body>
+</html>

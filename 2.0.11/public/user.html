@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamiczny Użytkownik</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            /* Domyślne kolory i czcionka */
+            background-color: #181717;
+            color: #000000;
+        }
+        .user-bar {
+            width: 100%;
+            background-color: #faf5f5;
+            padding: 8px 0;
+            text-align: center;
+            font-size: 50px;
+            color: red;
+            font-weight: bold;
+            box-shadow: 0px -1px 5px rgba(0,0,0,0.1); /* Cień u góry paska */
+            position: fixed; /* Ustawienie na dole */
+            bottom: 0; /* Pasek na dole */
+            left: 0;
+            right: 0;
+            z-index: 1000; /* Ustawienie, aby był na wierzchu */
+            margin-bottom: 0; /* Usunięcie dolnego marginesu */
+        }
+        .content {
+            text-align: center;
+            padding-top: 100px; /* Dodano odstęp, aby uniknąć nachodzenia na fixed header */
+        }
+        h1 {
+            font-size: 50px;
+            font-weight: bold;
+            color: #888;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: white;
+            padding: 20px;
+            margin: 0;
+            z-index: 1000;
+        }
+        .instruction-received {
+            font-size: 80px;
+            color: #000;
+        }
+        .segment {
+            margin-top: 20px;
+            font-size: 50px;
+            color: #222;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .segment a {
+            display: block;
+            margin: 10px 0;
+            font-size: 50px;
+            color: blue;
+            text-decoration: underline;
+        }
+        .iframe-container {
+            margin-top: 30px;
+            width: 100%;
+            background-color: #000000;
+            position: relative;
+        }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            transition: height 0.5s ease;
+            display: none; /* Ukryj iframe na początku */
+        }
+        .iframe-controls {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .error-message {
+            font-size: 40px;
+            color: white;
+            background-color: red;
+            font-weight: bold;
+            margin-top: 30px;
+            padding: 20px;
+            text-align: center;
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+        }
+        /* Styl dla przycisku togglingu panelu personalizacji */
+        .toggle-customization {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0px 1px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .toggle-customization:hover {
+            background-color: #007B9E;
+        }
+        /* Styl dla panelu personalizacji */
+        .customization-panel {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 800px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
+            text-align: left;
+            display: none; /* Ukryj panel na początku */
+        }
+        .customization-panel h2 {
+            margin-top: 0;
+        }
+        .customization-panel label {
+            display: block;
+            margin: 10px 0 5px;
+            font-size: 20px;
+        }
+        .customization-panel input[type="color"],
+        .customization-panel select,
+        .customization-panel input[type="range"] {
+            padding: 5px;
+            font-size: 18px;
+        }
+
+        /* Stylizacja Sekcji Cue Info */
+        #cueInfo {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: none; /* Ukryj na początku */
+            margin: 30px auto;
+            width: 80%;
+            max-width: 600px;
+            text-align: left;
+        }
+
+        #cueInfo h2 {
+            margin-bottom: 10px;
+            color: #333;
+            text-align: center;
+        }
+
+        #cueInfo p {
+            margin: 5px 0;
+            color: #555;
+            font-size: 24px;
+        }
+
+        #cueInfo a {
+            color: #4F4A85;
+            text-decoration: none;
+            font-size: 24px;
+        }
+
+        #cueInfo a:hover {
+            text-decoration: underline;
+        }
+
+        #countdown {
+            font-size: 32px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Stylizacja statusu połączenia */
+        #connectionStatus {
+            margin-top: 20px;
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        #connectionStatus.disconnected {
+            color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Pasek użytkownika na samej górze strony -->
+<div class="content">
+    <div class="user-bar" id="user-bar">Użytkownik</div>
+    <h1 id="instruction" class="instruction">Czekaj na instrukcje...</h1>
+
+    <!-- Sekcja Informacji o Cue -->
+    <div id="cueInfo">
+        <h2>Następny Cue</h2>
+        <p><strong>Wiadomość:</strong> <span id="cueMessage">Brak Cue</span></p>
+        <p><strong>URL:</strong> <a href="#" id="cueURL" target="_blank">Brak URL</a></p>
+        <div id="countdown">00:00:00</div>
+    </div>
+
+    <div id="segment" class="segment" style="display: none;">
+        <span id="segment-content"></span>
+    </div>
+
+    <div class="iframe-container">
+        <iframe id="web-browser" src="about:blank" allow="camera; microphone; fullscreen; autoplay"></iframe>
+    </div>
+
+    <!-- Kontrola rozmiaru iframe -->
+    <div class="iframe-controls">
+        <label for="iframe-height">Wysokość iframe (px):</label>
+        <input type="range" id="iframe-height" min="100" max="1000" value="600" step="50" onchange="adjustIframeHeight(this.value)">
+        <button onclick="setIframeFullScreen()">Pełny ekran</button>
+    </div>
+
+    <div id="connection-error" class="error-message">Brak połączenia z serwerem. Odśwież stronę.</div>
+    <div id="connectionStatus" class="connection-status">Łączenie z serwerem...</div>
+</div>
+
+<!-- Przyciski togglingu panelu personalizacji -->
+<button class="toggle-customization" id="toggle-customization">Personalizuj Wygląd</button>
+
+<!-- Panel personalizacji -->
+<div class="customization-panel" id="customization-panel">
+    <h2>Personalizacja Wyglądu</h2>
+    <label for="background-color-picker">Kolor Tła:</label>
+    <input type="color" id="background-color-picker" value="#ffffff">
+
+    <label for="text-color-picker">Kolor Tekstu:</label>
+    <input type="color" id="text-color-picker" value="#000000">
+
+    <label for="font-size-selector">Wielkość Czcionki (px):</label>
+    <select id="font-size-selector">
+        <option value="16">16</option>
+        <option value="18">18</option>
+        <option value="20" selected>20</option>
+        <option value="24">24</option>
+        <option value="28">28</option>
+        <option value="32">32</option>
+    </select>
+</div>
+
+<script>
+// Funkcja do pobierania userId z URL
+function getUserIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('userId'); // np. 'user1'
+}
+
+// Funkcja do pobierania adresu IP z serwera
+async function getServerAddress() {
+    const apiUrl = window.location.origin + '/config';  // Zmieniono na '/config'
+    try {
+        const response = await fetch(apiUrl);  // Pobiera dane z '/config'
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return `ws://${data.serverIP}:8080`;  // Zwraca pełny adres WebSocket
+    } catch (error) {
+        console.error('Błąd podczas pobierania adresu IP serwera:', error);
+        document.getElementById('connection-error').style.display = 'block';
+        document.getElementById('connectionStatus').textContent = 'Brak połączenia z serwerem.';
+        document.getElementById('connectionStatus').classList.add('disconnected');
+        return null;
+    }
+}
+
+// Funkcja do pobierania danych użytkownika z serwera
+async function getUserName(userId) {
+    const apiUrl = window.location.origin + '/users';  // Zmieniono na '/users'
+    try {
+        const response = await fetch(apiUrl);  // Pobieranie danych użytkownika
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const user = data.users.find(u => u.id === userId);  // Znajdź użytkownika po ID
+        return user ? user.name : null;  // Zwraca nazwę użytkownika
+    } catch (error) {
+        console.error('Błąd podczas pobierania nazwy użytkownika:', error);
+        return null;
+    }
+}
+
+// Inicjalizacja WebSocket po uzyskaniu adresu IP z serwera
+async function initWebSocket(userId) {
+    const serverAddress = await getServerAddress();
+    if (!serverAddress) return;
+
+    const websocket = new WebSocket(serverAddress);
+
+    websocket.onopen = function() {
+        console.log('Połączenie WebSocket otwarte.');
+        document.getElementById('connection-error').style.display = 'none';
+        document.getElementById('connectionStatus').textContent = 'Połączono z serwerem.';
+        document.getElementById('connectionStatus').classList.remove('disconnected');
+    };
+
+    // Obsługa wiadomości WebSocket
+    websocket.onmessage = function(event) {
+        console.log('Otrzymano wiadomość przez WebSocket:', event.data);
+        try {
+            const data = JSON.parse(event.data); // Parsowanie wiadomości JSON
+            if (data.type === 'user-instruction' && data.userId === userId) {
+                enqueueCue(data.instruction, data.url, data.cueTime);
+            } else if (data.type === 'reset' && data.userId === userId) {
+                // Resetuj informacje o Cue
+                resetCueInfo();
+            }
+        } catch (error) {
+            console.error('Błąd przetwarzania wiadomości:', error);
+        }
+    };
+
+    websocket.onclose = function() {
+        console.log('Połączenie WebSocket zamknięte.');
+        document.getElementById('connection-error').style.display = 'block';
+        document.getElementById('connectionStatus').textContent = 'Połączenie z serwerem zostało utracone.';
+        document.getElementById('connectionStatus').classList.add('disconnected');
+        attemptReconnect(userId);
+    };
+
+    websocket.onerror = function(error) {
+        console.error('Błąd WebSocket:', error);
+        document.getElementById('connection-error').style.display = 'block';
+        document.getElementById('connectionStatus').textContent = 'Błąd połączenia z serwerem.';
+        document.getElementById('connectionStatus').classList.add('disconnected');
+    };
+}
+
+// Funkcja do obsługi ponownego łączenia WebSocket
+function attemptReconnect(userId) {
+    setTimeout(() => {
+        console.log('Próbuję ponownie połączyć się z serwerem WebSocket...');
+        document.getElementById('connectionStatus').textContent = 'Ponowne łączenie...';
+        initWebSocket(userId);
+    }, 5000); // Próba ponownego połączenia po 5 sekundach
+}
+
+// Funkcja wyświetlająca najbliższy Cue z kolejki
+function displayNextCueFromQueue() {
+    if (cueQueue.length === 0) {
+        currentCue = null;
+        resetCueInfo();
+        return;
+    }
+    currentCue = cueQueue.shift();
+    displayCue(currentCue);
+}
+
+// Funkcja do dodawania Cue do kolejki
+function enqueueCue(message, url, cueTime) {
+    const cue = { message, url, cueTime };
+    cueQueue.push(cue);
+    // Sortuj kolejkę według czasu Cue
+    cueQueue.sort((a, b) => a.cueTime - b.cueTime);
+    console.log('Dodano Cue do kolejki:', cue);
+    // Jeśli nie ma aktualnego Cue, wyświetl najbliższy
+    if (!currentCue) {
+        displayNextCueFromQueue();
+    }
+}
+
+// Funkcja do wyświetlania Cue
+function displayCue(cue) {
+    const cueInfoDiv = document.getElementById('cueInfo');
+    const cueMessageEl = document.getElementById('cueMessage');
+    const cueURLEl = document.getElementById('cueURL');
+    const countdownEl = document.getElementById('countdown');
+
+    // Wyświetl sekcję Cue Info
+    cueInfoDiv.style.display = 'block';
+    cueMessageEl.textContent = cue.message || 'Brak wiadomości';
+    if (cue.url) {
+        cueURLEl.href = cue.url;
+        cueURLEl.textContent = cue.url;
+    } else {
+        cueURLEl.href = '#';
+        cueURLEl.textContent = 'Brak URL';
+    }
+
+    // Oblicz czas pozostały do Cue
+    const currentTime = Math.floor(Date.now() / 1000); // Aktualny czas w sekundach
+    const timeRemaining = cue.cueTime - currentTime;
+
+    if (timeRemaining > 0) {
+        startCountdown(timeRemaining, countdownEl, () => {
+            // Callback po zakończeniu odliczania
+            displayNextCueFromQueue();
+        });
+    } else {
+        countdownEl.textContent = 'Cue już nastąpił';
+        // Automatycznie przejdź do następnego Cue
+        setTimeout(() => {
+            displayNextCueFromQueue();
+        }, 2000); // Czekaj 2 sekundy przed przejściem do następnego Cue
+    }
+}
+
+// Funkcja resetująca informacje o Cue
+function resetCueInfo() {
+    const cueInfoDiv = document.getElementById('cueInfo');
+    const cueMessageEl = document.getElementById('cueMessage');
+    const cueURLEl = document.getElementById('cueURL');
+    const countdownEl = document.getElementById('countdown');
+
+    cueInfoDiv.style.display = 'none';
+    cueMessageEl.textContent = 'Brak Cue';
+    cueURLEl.href = '#';
+    cueURLEl.textContent = 'Brak URL';
+    countdownEl.textContent = '00:00:00';
+
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+    }
+}
+
+// Funkcja rozpoczynająca odliczanie czasu
+function startCountdown(seconds, displayElement, onComplete) {
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+    }
+
+    let remaining = seconds;
+
+    updateCountdownDisplay(remaining, displayElement);
+
+    countdownInterval = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+            clearInterval(countdownInterval);
+            displayElement.textContent = 'Cue nastąpił!';
+            if (onComplete) onComplete();
+        } else {
+            updateCountdownDisplay(remaining, displayElement);
+        }
+    }, 1000);
+}
+
+// Funkcja aktualizująca wyświetlany czas odliczania
+function updateCountdownDisplay(seconds, displayElement) {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    displayElement.textContent = `${padZero(hrs)}:${padZero(mins)}:${padZero(secs)}`;
+}
+
+// Funkcja dodająca zero przed jednocyfrowymi liczbami
+function padZero(num) {
+    return num < 10 ? '0' + num : num;
+}
+
+// Inicjalizacja ustawień personalizacji po załadowaniu strony
+window.onload = async function() {
+    const userId = getUserIdFromUrl(); // Pobiera userId z URL
+    if (!userId) {
+        alert('Brak identyfikatora użytkownika w URL. Dodaj parametry ?userId=yourUserId');
+        return;
+    }
+    const userName = await getUserName(userId);  // Pobiera nazwę użytkownika z serwera
+
+    // Ustawienie tytułu strony i paska użytkownika
+    if (userName) {
+        document.title = `User ${userId} = ${userName}`;  // Tytuł z nazwą użytkownika
+        document.getElementById('user-bar').textContent = `${userName}`;
+    } else {
+        document.getElementById('user-bar').textContent = `User ${userId}`;
+    }
+
+    console.log(`Strona załadowana dla: ${userId}`);
+    initWebSocket(userId);  // Inicjalizacja WebSocket po załadowaniu strony
+
+    // Załaduj ustawienia personalizacji
+    loadCustomizationSettings();
+};
+
+// Funkcje personalizacji
+
+// Funkcja do ustawiania koloru tła
+function setBackgroundColor(color) {
+    document.body.style.backgroundColor = color;
+    localStorage.setItem('backgroundColor', color);
+}
+
+// Funkcja do ustawiania koloru tekstu
+function setTextColor(color) {
+    document.body.style.color = color;
+    // Aktualizacja kolorów specyficznych elementów
+    document.querySelectorAll('.user-bar, .instruction, .segment, .segment a').forEach(element => {
+        if (element.classList.contains('instruction-received')) {
+            element.style.color = '#000000';
+        } else if (element.tagName.toLowerCase() === 'a') {
+            element.style.color = 'blue'; // Możesz dostosować lub dodać opcje dla użytkownika
+        } else {
+            element.style.color = color;
+        }
+    });
+    localStorage.setItem('textColor', color);
+}
+
+// Funkcja do ustawiania wielkości czcionki
+function setFontSize(size) {
+    document.body.style.fontSize = `${size}px`;
+    localStorage.setItem('fontSize', size);
+}
+
+// Funkcja do ładowania ustawień z localStorage
+function loadCustomizationSettings() {
+    const backgroundColor = localStorage.getItem('backgroundColor');
+    const textColor = localStorage.getItem('textColor');
+    const fontSize = localStorage.getItem('fontSize');
+
+    if (backgroundColor) {
+        setBackgroundColor(backgroundColor);
+        document.getElementById('background-color-picker').value = backgroundColor;
+    }
+
+    if (textColor) {
+        setTextColor(textColor);
+        document.getElementById('text-color-picker').value = textColor;
+    }
+
+    if (fontSize) {
+        setFontSize(fontSize);
+        document.getElementById('font-size-selector').value = fontSize;
+    }
+}
+
+// Event listeners dla panelu personalizacji
+document.getElementById('background-color-picker').addEventListener('input', function() {
+    setBackgroundColor(this.value);
+});
+
+document.getElementById('text-color-picker').addEventListener('input', function() {
+    setTextColor(this.value);
+});
+
+document.getElementById('font-size-selector').addEventListener('change', function() {
+    setFontSize(this.value);
+});
+
+// Funkcja do togglingu panelu personalizacji
+function toggleCustomizationPanel() {
+    const panel = document.getElementById('customization-panel');
+    const button = document.getElementById('toggle-customization');
+    if (panel.style.display === 'none' || panel.style.display === '') {
+        panel.style.display = 'block';
+        button.textContent = 'Zamknij Personalizację';
+    } else {
+        panel.style.display = 'none';
+        button.textContent = 'Personalizuj Wygląd';
+    }
+}
+
+// Event listener dla przycisku togglingu
+document.getElementById('toggle-customization').addEventListener('click', toggleCustomizationPanel);
+
+// Funkcje Zarządzania Cue
+
+// Inicjalizacja kolejki Cue
+let cueQueue = [];
+let currentCue = null;
+let countdownInterval = null;
+
+// Funkcja do dodawania Cue do kolejki
+function enqueueCue(message, url, cueTime) {
+    const cue = { message, url, cueTime };
+    cueQueue.push(cue);
+    // Sortuj kolejkę według czasu Cue
+    cueQueue.sort((a, b) => a.cueTime - b.cueTime);
+    console.log('Dodano Cue do kolejki:', cue);
+    // Jeśli nie ma aktualnego Cue, wyświetl najbliższy
+    if (!currentCue) {
+        displayNextCueFromQueue();
+    }
+}
+
+// Funkcja do wyświetlania Cue
+function displayCue(cue) {
+    const cueInfoDiv = document.getElementById('cueInfo');
+    const cueMessageEl = document.getElementById('cueMessage');
+    const cueURLEl = document.getElementById('cueURL');
+    const countdownEl = document.getElementById('countdown');
+
+    // Wyświetl sekcję Cue Info
+    cueInfoDiv.style.display = 'block';
+    cueMessageEl.textContent = cue.message || 'Brak wiadomości';
+    if (cue.url) {
+        cueURLEl.href = cue.url;
+        cueURLEl.textContent = cue.url;
+    } else {
+        cueURLEl.href = '#';
+        cueURLEl.textContent = 'Brak URL';
+    }
+
+    // Oblicz czas pozostały do Cue
+    const currentTime = Math.floor(Date.now() / 1000); // Aktualny czas w sekundach
+    const timeRemaining = cue.cueTime - currentTime;
+
+    if (timeRemaining > 0) {
+        startCountdown(timeRemaining, countdownEl, () => {
+            // Callback po zakończeniu odliczania
+            displayNextCueFromQueue();
+        });
+    } else {
+        countdownEl.textContent = 'Cue już nastąpił';
+        // Automatycznie przejdź do następnego Cue
+        setTimeout(() => {
+            displayNextCueFromQueue();
+        }, 2000); // Czekaj 2 sekundy przed przejściem do następnego Cue
+    }
+}
+
+// Funkcja wyświetlająca najbliższy Cue z kolejki
+function displayNextCueFromQueue() {
+    if (cueQueue.length === 0) {
+        currentCue = null;
+        resetCueInfo();
+        return;
+    }
+    currentCue = cueQueue.shift();
+    displayCue(currentCue);
+}
+
+// Funkcja resetująca informacje o Cue
+function resetCueInfo() {
+    const cueInfoDiv = document.getElementById('cueInfo');
+    const cueMessageEl = document.getElementById('cueMessage');
+    const cueURLEl = document.getElementById('cueURL');
+    const countdownEl = document.getElementById('countdown');
+
+    cueInfoDiv.style.display = 'none';
+    cueMessageEl.textContent = 'Brak Cue';
+    cueURLEl.href = '#';
+    cueURLEl.textContent = 'Brak URL';
+    countdownEl.textContent = '00:00:00';
+
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+    }
+}
+
+// Funkcja rozpoczynająca odliczanie czasu
+function startCountdown(seconds, displayElement, onComplete) {
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+    }
+
+    let remaining = seconds;
+
+    updateCountdownDisplay(remaining, displayElement);
+
+    countdownInterval = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+            clearInterval(countdownInterval);
+            displayElement.textContent = 'Cue nastąpił!';
+            if (onComplete) onComplete();
+        } else {
+            updateCountdownDisplay(remaining, displayElement);
+        }
+    }, 1000);
+}
+
+// Funkcja aktualizująca wyświetlany czas odliczania
+function updateCountdownDisplay(seconds, displayElement) {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    displayElement.textContent = `${padZero(hrs)}:${padZero(mins)}:${padZero(secs)}`;
+}
+
+// Funkcja dodająca zero przed jednocyfrowymi liczbami
+function padZero(num) {
+    return num < 10 ? '0' + num : num;
+}
+</script>
+
+</body>
+</html>

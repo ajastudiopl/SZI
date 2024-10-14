@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Show</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 100px auto 0 auto;
+            position: relative;
+        }
+        .scene-list {
+            margin-top: 20px;
+        }
+        .scene-item {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .scene-item:hover {
+            background-color: lightgray;
+        }
+        .active-scene {
+            animation: pulse 1s infinite;
+        }
+        .next-scene .next-arrow {
+            display: block;
+        }
+        .arrow {
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: green;
+            display: none;
+        }
+        .next-scene .arrow {
+            display: block;
+        }
+        .scene-description {
+            font-style: italic;
+            color: gray;
+            margin-top: 5px;
+        }
+
+        /* Styl przycisków */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 10px;
+            background-color: white;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .back-button, .stop-button, .start-button, .reset-button {
+            padding: 15px 30px;
+            background-color: #4F4A85;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+
+        .back-button:hover, .stop-button:hover, .start-button:hover, .reset-button:hover {
+            background-color: #383351;
+        }
+
+        /* Pozycjonowanie przycisków */
+        .back-button {
+            margin: 0 auto;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .stop-button, .start-button, .reset-button {
+            margin-left: auto;
+        }
+
+        @keyframes pulse {
+            0% {
+                background-color: white;
+            }
+            50% {
+                background-color: lightcoral;
+            }
+            100% {
+                background-color: white;
+            }
+        }
+
+        .scene-list {
+            margin-top: 60px;
+        }
+
+        /* Stylowanie Timera */
+        #timer {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Kontenery przycisków na górze -->
+<div class="button-container">
+    <!-- Przycisk powrotu do trybu edycji -->
+    <button class="back-button" onclick="goBackToEdit()">Powrót do trybu edycji</button>
+    <!-- Przycisk Start -->
+    <button class="start-button" onclick="startPlayback()">Start</button>
+    <!-- Przycisk Stop -->
+    <button class="stop-button" onclick="stopPlayback()" disabled>Stop</button>
+    <!-- Przycisk Reset -->
+    <button class="reset-button" onclick="resetPlayback()" disabled>Reset</button>
+</div>
+
+<div class="container">
+    <h1>Live Show</h1>
+    
+    <!-- Timer pokazujący aktualny czas odtwarzania -->
+    <div id="timer">00:00:00</div>
+    
+    <!-- Lista scen -->
+    <div class="scene-list" id="scene-list">
+        <!-- Elementy sceny zostaną dodane dynamicznie -->
+    </div>
+</div>
+
+<script>
+    let scenes = [];
+    let cues = [];
+    let currentCueIndex = 0;
+    let playbackStartTime = null;
+    let playbackInterval = null;
+    let websocket;
+    let serverIP = 'localhost'; // Domyślny adres IP serwera
+
+    // Elementy DOM
+    const sceneListDiv = document.getElementById('scene-list');
+    const timerDiv = document.getElementById('timer');
+    const startButton = document.querySelector('.start-button');
+    const stopButton = document.querySelector('.stop-button');
+    const resetButton = document.querySelector('.reset-button');
+
+    // Funkcja do formatowania czasu w formacie mm:ss:ms
+    function formatTime(time) {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        const millis = Math.floor((time % 1) * 100);
+        return `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}:${millis < 10 ? '0' + millis : millis}`;
+    }
+
+    // Funkcja do pobierania konfiguracji z serwera
+    async function loadConfig() {
+        try {
+            const response = await fetch('/config');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            serverIP = data.serverIP || 'localhost';
+            console.log('Adres IP serwera:', serverIP);
+        } catch (error) {
+            console.error('Błąd podczas pobierania konfiguracji:', error);
+            alert('Nie udało się pobrać konfiguracji serwera. Upewnij się, że serwer jest uruchomiony.');
+        }
+    }
+
+    // Pobieranie scen z serwera (tylko sceny typu 'timeline')
+    async function loadScenesFromServer() {
+        try {
+            const response = await fetch(`http://${serverIP}:3000/load?type=timeline`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            scenes = data.scenes || [];
+            extractCues();
+            renderSceneList();
+        } catch (error) {
+            console.error('Błąd podczas ładowania danych z serwera:', error);
+            alert('Nie udało się załadować scen. Upewnij się, że serwer jest uruchomiony i dostępny.');
+        }
+    }
+
+    // Ekstrakcja Cue z wszystkich scen
+    function extractCues() {
+        cues = [];
+        scenes.forEach(scene => {
+            if (scene.cues && Array.isArray(scene.cues)) {
+                scene.cues.forEach(cue => {
+                    cues.push({
+                        sceneId: scene.id,
+                        cueId: cue.id,
+                        name: cue.name,
+                        time: cue.time, // czas w sekundach
+                        users: cue.users,
+                        messages: cue.messages,
+                        urls: cue.urls,
+                        triggered: false
+                    });
+                });
+            }
+        });
+
+        // Sortowanie Cue według czasu
+        cues.sort((a, b) => a.time - b.time);
+    }
+
+    // Renderowanie listy scen
+    function renderSceneList() {
+        sceneListDiv.innerHTML = '';
+
+        scenes.forEach((scene, index) => {
+            const sceneDiv = document.createElement('div');
+            sceneDiv.classList.add('scene-item');
+            sceneDiv.innerHTML = `<span class="arrow">→</span> ${scene.title} <div class="scene-description">${scene.description || 'Brak opisu'}</div>`;
+            sceneListDiv.appendChild(sceneDiv);
+        });
+    }
+
+    // Nawiązywanie połączenia WebSocket
+    function initWebSocket() {
+        websocket = new WebSocket(`ws://${serverIP}:8080`);
+
+        websocket.onopen = function () {
+            console.log('Połączenie WebSocket otwarte.');
+
+            // Wysyłanie wiadomości identyfikacyjnej dla każdego użytkownika
+            // Zakładamy, że Live Show ma unikalny userId, np. 'liveShow'
+            const identifyMessage = {
+                type: 'identify',
+                userId: 'liveShow' // Możesz dostosować ten identyfikator według potrzeb
+            };
+            websocket.send(JSON.stringify(identifyMessage));
+            console.log('Wysłano wiadomość identyfikacyjną:', identifyMessage);
+        };
+
+        websocket.onmessage = function (event) {
+            console.log('Otrzymano wiadomość z serwera:', event.data);
+            // Możesz dodać obsługę otrzymanych wiadomości tutaj, jeśli jest to potrzebne
+        };
+
+        websocket.onclose = function () {
+            console.log('Połączenie WebSocket zamknięte.');
+            alert('Połączenie WebSocket zostało zamknięte.');
+        };
+
+        websocket.onerror = function (error) {
+            console.error('Błąd WebSocket:', error);
+            alert('Wystąpił błąd połączenia WebSocket.');
+        };
+    }
+
+    // Funkcja do odtwarzania scen
+    function startPlayback() {
+        if (playbackInterval) {
+            console.warn('Odtwarzanie już jest w toku.');
+            return;
+        }
+
+        playbackStartTime = Date.now();
+        startButton.disabled = true;
+        stopButton.disabled = false;
+        resetButton.disabled = false;
+
+        playbackInterval = setInterval(() => {
+            const elapsedTime = (Date.now() - playbackStartTime) / 1000; // w sekundach
+            timerDiv.textContent = formatTime(elapsedTime);
+
+            // Sprawdzanie Cue do wyzwolenia
+            cues.forEach((cue, index) => {
+                if (!cue.triggered && elapsedTime >= cue.time) {
+                    cue.triggered = true;
+                    triggerCue(cue);
+                }
+            });
+
+            // Jeśli wszystkie Cue zostały wyzwolone, zatrzymaj odtwarzanie
+            if (cues.every(cue => cue.triggered)) {
+                stopPlayback();
+            }
+        }, 100); // Aktualizacja co 100ms
+    }
+
+    // Funkcja do zatrzymywania odtwarzania
+    function stopPlayback() {
+        if (!playbackInterval) return;
+
+        clearInterval(playbackInterval);
+        playbackInterval = null;
+        startButton.disabled = false;
+        stopButton.disabled = true;
+    }
+
+    // Funkcja do resetowania odtwarzania
+    function resetPlayback() {
+        stopPlayback();
+        playbackStartTime = null;
+        timerDiv.textContent = '00:00:00';
+
+        // Resetowanie wyzwolonych Cue
+        cues.forEach(cue => {
+            cue.triggered = false;
+        });
+
+        startButton.disabled = false;
+        stopButton.disabled = true;
+        resetButton.disabled = true;
+    }
+
+    // Funkcja do wyzwalania Cue
+    function triggerCue(cue) {
+        if (websocket && websocket.readyState === WebSocket.OPEN) {
+            cue.users.forEach(userId => {
+                const message = {
+                    type: 'user-instruction',
+                    userId: userId,
+                    instruction: cue.messages[userId] || '',
+                    url: cue.urls[userId] || 'about:blank',
+                    sceneId: cue.sceneId,
+                    cueId: cue.cueId,
+                    cueTime: cue.time
+                };
+                websocket.send(JSON.stringify(message));
+                console.log('Wysłano wiadomość przez WebSocket:', message);
+            });
+        } else {
+            console.error('WebSocket nie jest otwarty. Nie można wysłać wiadomości Cue.');
+        }
+    }
+
+    // Wysłanie wiadomości resetującej do użytkowników
+    function resetScenes() {
+        resetPlayback();
+
+        // Wysłanie wiadomości resetującej do użytkowników
+        if (websocket && websocket.readyState === WebSocket.OPEN) {
+            scenes.forEach(scene => {
+                if (scene.cues && Array.isArray(scene.cues)) {
+                    scene.cues.forEach(cue => {
+                        cue.users.forEach(userId => {
+                            const resetMessage = {
+                                type: 'reset',
+                                userId: userId,
+                                instruction: '',
+                                url: 'about:blank',
+                                sceneId: scene.id,
+                                cueId: cue.id,
+                                cueTime: cue.time
+                            };
+                            websocket.send(JSON.stringify(resetMessage));
+                            console.log('Wysłano wiadomość reset dla użytkownika:', userId, resetMessage);
+                        });
+                    });
+                }
+            });
+        }
+    }
+
+    // Przejdź do trybu edycji
+    function goBackToEdit() {
+        window.location.href = 'editmode.html';
+    }
+
+    // Inicjalizacja strony: pobranie konfiguracji, scen i nawiązanie połączenia WebSocket
+    window.onload = async function() {
+        await loadConfig();
+        await loadScenesFromServer();
+        initWebSocket();
+    };
+
+    // Obsługa klawiszy: Spacja - start/stop odtwarzania, Backquote - powrót do edycji
+    document.addEventListener('keydown', function(event) {
+        if (event.code === 'Space') {
+            event.preventDefault(); // Zapobiega przewijaniu strony
+            if (playbackInterval) {
+                stopPlayback();
+            } else {
+                startPlayback();
+            }
+        }
+        if (event.code === 'Backquote') {
+            goBackToEdit();
+        }
+    });
+</script>
+
+</body>
+</html>

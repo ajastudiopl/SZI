@@ -19,54 +19,78 @@
       }
     },
     {
-      "id": "scene-b6cd6810-1856-482b-a2f7-ffafcaf83c62",
+      "id": "scene-92afa334-c878-419e-b28e-d367177aa761",
+      "type": "regular",
+      "title": "nowa treść do user 1",
+      "content": "",
+      "users": {
+        "user1": "nowa scena i treść do user1",
+        "user2": "",
+        "user3": ""
+      },
+      "multimedia": {},
+      "order": 3,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true
+      }
+    },
+    {
+      "id": "scene-5c70d415-fe8f-4384-86e3-7f27306a8b15",
       "type": "timeline",
       "title": "Scena 1",
       "description": "",
-      "audioURL": "http://192.168.16.78:3000/uploads/0f1083eb-a5f2-4701-940b-c982e044bd6b.mp3",
+      "audioURL": "http://192.168.0.23:3000/uploads/9cd7cf17-c3bc-471d-aad9-41fe13d781fc.mp3",
       "audioFileName": "Filmowa.mp3",
       "cues": [
         {
-          "id": "cue-6287dffa-8126-4dc0-baff-ab7e96030d97",
+          "id": "cue-9df444f1-de95-44a6-8872-03c48fff2138",
           "name": "Cue 1",
-          "time": 2.24,
-          "users": [
-            "user2"
-          ],
-          "messages": {
-            "user2": "Treść do user2 w cue1"
-          },
-          "urls": {
-            "user2": ""
-          },
-          "triggered": false,
-          "sceneId": "scene-b6cd6810-1856-482b-a2f7-ffafcaf83c62"
-        },
-        {
-          "id": "cue-f6ea9056-4f83-4556-8b62-970b88263529",
-          "name": "Cue 2",
-          "time": 6.05,
+          "time": 2.73,
           "users": [
             "user1"
           ],
           "messages": {
-            "user1": "Treść do user1 w cue2"
+            "user1": "treść do user1"
           },
           "urls": {
             "user1": ""
           },
           "triggered": false,
-          "sceneId": "scene-b6cd6810-1856-482b-a2f7-ffafcaf83c62"
+          "sceneId": "scene-5c70d415-fe8f-4384-86e3-7f27306a8b15"
         },
         {
-          "id": "cue-9dd4d555-c199-48d7-9b15-dab1869f7d12",
-          "name": "Cue 3",
-          "time": 10.76839,
-          "users": [],
-          "messages": {},
-          "urls": {},
+          "id": "cue-a674dca8-2362-4540-9fa4-d0e715744dff",
+          "name": "Cue 2",
+          "time": 8.49,
+          "users": [
+            "user1"
+          ],
+          "messages": {
+            "user1": "nowe cue 2 do user1"
+          },
+          "urls": {
+            "user1": ""
+          },
           "triggered": false,
-          "sceneId": "scene-b6cd6810-1856-482b-a2f7-ffafcaf83c62"
+          "sceneId": "scene-5c70d415-fe8f-4384-86e3-7f27306a8b15"
+        },
+        {
+          "id": "cue-aa61a940-5e73-4e23-8181-6e7b4310f15c",
+          "name": "Cue 3",
+          "time": 18.72,
+          "users": [
+            "user1"
+          ],
+          "messages": {
+            "user1": "cue 3 do user1"
+          },
+          "urls": {
+            "user1": ""
+          },
+          "triggered": false,
+          "sceneId": "scene-5c70d415-fe8f-4384-86e3-7f27306a8b15"
         }
       ],
       "cueCount": 0,

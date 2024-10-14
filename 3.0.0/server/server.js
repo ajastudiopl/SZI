@@ -1,4 +1,3 @@
-// server/server.js
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -45,7 +44,6 @@ function writeConfig(newConfig) {
 // Funkcja do odczytu danych sesji
 function readSessionData() {
     if (!fs.existsSync(sessionPath)) {
-        // Domyślne dane, jeśli plik nie istnieje
         const defaultData = {
             scenes: [],
             users: []
@@ -59,7 +57,6 @@ function readSessionData() {
         return parsedData;
     } catch (error) {
         console.error('Błąd parsowania session_data.json:', error);
-        // Zwraca puste dane w przypadku błędu
         return { scenes: [], users: [] };
     }
 }
@@ -93,13 +90,11 @@ const upload = multer({ storage: storage });
 
 // --- Endpointy ---
 
-// Endpoint do pobierania konfiguracji
 app.get('/config', (req, res) => {
     const config = readConfig();
     res.json(config);
 });
 
-// Endpoint do aktualizacji konfiguracji
 app.post('/config', (req, res) => {
     const { serverIP } = req.body;
     if (!serverIP) {
@@ -109,20 +104,15 @@ app.post('/config', (req, res) => {
     const config = readConfig();
     config.serverIP = serverIP;
     writeConfig(config);
-    console.log('Konfiguracja zaktualizowana:', config);
     res.json({ message: 'Konfiguracja zaktualizowana.', config });
 });
 
-// Endpoint do ładowania scen i użytkowników wraz z serverIP
 app.get('/load', (req, res) => {
     const sessionData = readSessionData();
-
-    // Dodanie serverIP i port do odpowiedzi
     const config = readConfig();
     sessionData.serverIP = config.serverIP;
     sessionData.port = config.port;
 
-    // Filtrujemy sceny na podstawie parametru 'type'
     const type = req.query.type;
     if (type) {
         sessionData.scenes = sessionData.scenes.filter(scene => scene.type === type);
@@ -131,7 +121,6 @@ app.get('/load', (req, res) => {
     res.json(sessionData);
 });
 
-// Endpoint do zapisu danych scen i użytkowników
 app.post('/save', (req, res) => {
     const { scenes, users } = req.body;
     console.log('Otrzymano dane do zapisu:', { scenes, users });
@@ -142,46 +131,32 @@ app.post('/save', (req, res) => {
 
     try {
         const sessionData = readSessionData();
-
-        // Usuwamy istniejące sceny typu 'regular'
         sessionData.scenes = sessionData.scenes.filter(scene => scene.type !== 'regular');
-
-        // Dodajemy nowe sceny typu 'regular' z danych przesłanych z klienta
         const newRegularScenes = scenes.filter(scene => scene.type === 'regular');
         sessionData.scenes = sessionData.scenes.concat(newRegularScenes);
-
-        // Aktualizujemy użytkowników
         sessionData.users = users;
-
         writeSessionData(sessionData);
-        console.log('Dane sesji zapisane poprawnie');
         res.json({ message: 'Dane sesji zapisane' });
     } catch (error) {
-        console.error('Błąd podczas zapisywania danych sesji:', error);
         res.status(500).json({ error: 'Błąd serwera podczas zapisywania danych' });
     }
 });
 
-// Endpoint do pobierania listy użytkowników
 app.get('/users', (req, res) => {
     const sessionData = readSessionData();
     const usersList = sessionData.users;
     res.json({ users: usersList });
 });
 
-// Endpoint do przesyłania plików audio
 app.post('/upload-audio', upload.single('audio'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'Brak pliku audio w żądaniu.' });
     }
 
-    // Tworzymy URL do pliku audio
     const audioURL = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-
     res.json({ audioURL });
 });
 
-// Endpoint do zapisu scen z timeline.html
 app.post('/save-scenes', (req, res) => {
     const { scenes } = req.body;
     console.log('Otrzymano dane scen do zapisu:', JSON.stringify(scenes, null, 2));
@@ -192,29 +167,21 @@ app.post('/save-scenes', (req, res) => {
 
     try {
         const sessionData = readSessionData();
-
-        // Usuwamy istniejące sceny typu 'timeline'
         sessionData.scenes = sessionData.scenes.filter(scene => scene.type !== 'timeline');
-
-        // Dodajemy nowe sceny typu 'timeline' z danych przesłanych z klienta
         const newTimelineScenes = scenes.filter(scene => scene.type === 'timeline');
         sessionData.scenes = sessionData.scenes.concat(newTimelineScenes);
-
         writeSessionData(sessionData);
         res.json({ message: 'Sceny zostały zapisane.' });
     } catch (error) {
-        console.error('Błąd podczas zapisywania scen:', error);
         res.status(500).json({ error: 'Błąd serwera podczas zapisywania scen.' });
     }
 });
 
-// Endpoint do pobierania wszystkich scen
 app.get('/scenes', (req, res) => {
     const sessionData = readSessionData();
     const type = req.query.type;
     let scenes = sessionData.scenes;
 
-    // Filtrujemy sceny na podstawie parametru 'type'
     if (type) {
         scenes = scenes.filter(scene => scene.type === type);
     }
@@ -222,7 +189,6 @@ app.get('/scenes', (req, res) => {
     res.json({ scenes });
 });
 
-// Endpoint do usuwania sceny
 app.delete('/scenes/:id', (req, res) => {
     const sceneId = req.params.id;
     console.log(`Otrzymano żądanie usunięcia sceny: ${sceneId}`);
@@ -240,12 +206,10 @@ app.delete('/scenes/:id', (req, res) => {
         writeSessionData(sessionData);
         res.json({ message: 'Scena została usunięta.' });
     } catch (error) {
-        console.error('Błąd podczas usuwania sceny:', error);
         res.status(500).json({ error: 'Błąd serwera podczas usuwania sceny.' });
     }
 });
 
-// Endpoint do dodawania sceny z timeline do editmode
 app.post('/add-scene', (req, res) => {
     const newScene = req.body;
     console.log('Otrzymano żądanie dodania sceny do editmode:', newScene);
@@ -256,23 +220,66 @@ app.post('/add-scene', (req, res) => {
 
     try {
         const sessionData = readSessionData();
-
-        // Zmiana typu sceny na 'regular'
         newScene.type = 'regular';
-
-        // Zapewniamy unikalne ID sceny
         newScene.id = uuidv4();
-
-        // Dodajemy nową scenę
         sessionData.scenes.push(newScene);
-
         writeSessionData(sessionData);
         res.json({ message: 'Scena została dodana do listy scen w editmode.' });
     } catch (error) {
-        console.error('Błąd podczas dodawania sceny do editmode:', error);
         res.status(500).json({ error: 'Błąd serwera podczas dodawania sceny.' });
     }
 });
+
+// --- DODATKI ---
+
+// Endpoint do zapisu Cue z wieloma użytkownikami
+app.post('/save-cue', (req, res) => {
+    const cueData = req.body;
+    try {
+        saveCue(cueData);
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error('Błąd podczas zapisywania Cue:', error);
+        res.status(500).json({ error: 'Błąd podczas zapisywania Cue' });
+    }
+});
+
+// Funkcja zapisująca Cue
+function saveCue(cueData) {
+    const cueId = cueData.id;
+    const sceneId = cueData.sceneId;
+
+    const sessionData = readSessionData();
+    const scene = sessionData.scenes.find(scene => scene.id === sceneId);
+
+    if (!scene) {
+        throw new Error('Scene not found');
+    }
+
+    let cue = scene.cues.find(c => c.id === cueId);
+
+    if (!cue) {
+        cue = {
+            id: cueId,
+            name: cueData.name,
+            time: cueData.time,
+            users: [],
+            messages: {},
+            urls: {},
+            triggered: false
+        };
+        scene.cues.push(cue);
+    }
+
+    cue.users = [...cueData.users];
+    cueData.users.forEach(user => {
+        cue.messages[user] = cueData.messages[user] || '';
+        cue.urls[user] = cueData.urls[user] || '';
+    });
+
+    writeSessionData(sessionData);
+    console.log(`Zapisano Cue ${cueId} dla użytkowników:`, cue.users);
+}
 
 // Serwowanie plików statycznych z katalogu 'public'
 app.use(express.static(path.join(__dirname, '../public')));
@@ -294,7 +301,6 @@ wss.on('connection', (ws) => {
     console.log('Nowe połączenie WebSocket');
 
     ws.on('message', (message) => {
-        // Zakładamy, że wiadomości są wysyłane jako tekst (JSON)
         const messageStr = message.toString();
         console.log('Otrzymano wiadomość:', messageStr);
 
@@ -302,11 +308,9 @@ wss.on('connection', (ws) => {
         try {
             parsedMessage = JSON.parse(messageStr);
         } catch (e) {
-            console.error('Błąd parsowania wiadomości JSON:', e);
             return;
         }
 
-        // Broadcastuj wiadomość do wszystkich innych klientów
         wss.clients.forEach((client) => {
             if (client !== ws && client.readyState === WebSocket.OPEN) {
                 client.send(JSON.stringify(parsedMessage));

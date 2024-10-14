@@ -13,21 +13,21 @@
             color: #000000;
         }
         .user-bar {
-            width: 100%;
-            background-color: #faf5f5;
-            padding: 8px 0;
-            text-align: center;
-            font-size: 50px;
-            color: red;
-            font-weight: bold;
-            box-shadow: 0px -1px 5px rgba(0,0,0,0.1); /* Cień u góry paska */
-            position: fixed; /* Ustawienie na dole */
-            bottom: 0; /* Pasek na dole */
-            left: 0;
-            right: 0;
-            z-index: 1000; /* Ustawienie, aby był na wierzchu */
-            margin-bottom: 0; /* Usunięcie dolnego marginesu */
-        }
+    width: 100%;
+    background-color: #faf5f5;
+    padding: 8px 0;
+    text-align: center;
+    font-size: 50px;
+    color: red;
+    font-weight: bold;
+    box-shadow: 0px -1px 5px rgba(0,0,0,0.1); /* Cień u góry paska */
+    position: fixed; /* Ustawienie na dole */
+    bottom: 0; /* Pasek na dole */
+    left: 0;
+    right: 0;
+    z-index: 1000; /* Ustawienie, aby był na wierzchu */
+    margin-bottom: 0; /* Usunięcie dolnego marginesu */
+}
         .content {
             text-align: center;
             padding-top: 100px; /* Dodano odstęp, aby uniknąć nachodzenia na fixed header */
@@ -140,61 +140,6 @@
             padding: 5px;
             font-size: 18px;
         }
-
-        /* Stylizacja Sekcji Cue Info */
-        #cueInfo {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            display: none; /* Ukryj na początku */
-            margin: 30px auto;
-            width: 80%;
-            max-width: 600px;
-            text-align: left;
-        }
-
-        #cueInfo h2 {
-            margin-bottom: 10px;
-            color: #333;
-            text-align: center;
-        }
-
-        #cueInfo p {
-            margin: 5px 0;
-            color: #555;
-            font-size: 24px;
-        }
-
-        #cueInfo a {
-            color: #4F4A85;
-            text-decoration: none;
-            font-size: 24px;
-        }
-
-        #cueInfo a:hover {
-            text-decoration: underline;
-        }
-
-        #countdown {
-            font-size: 32px;
-            font-weight: bold;
-            color: #e74c3c;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        /* Stylizacja statusu połączenia */
-        #connectionStatus {
-            margin-top: 20px;
-            color: #27ae60;
-            font-weight: bold;
-            font-size: 24px;
-        }
-
-        #connectionStatus.disconnected {
-            color: #c0392b;
-        }
     </style>
 </head>
 <body>
@@ -203,14 +148,6 @@
 <div class="content">
     <div class="user-bar" id="user-bar">Użytkownik</div>
     <h1 id="instruction" class="instruction">Czekaj na instrukcje...</h1>
-
-    <!-- Sekcja Informacji o Cue -->
-    <div id="cueInfo">
-        <h2>Następny Cue</h2>
-        <p><strong>Wiadomość:</strong> <span id="cueMessage">Brak Cue</span></p>
-        <p><strong>URL:</strong> <a href="#" id="cueURL" target="_blank">Brak URL</a></p>
-        <div id="countdown">00:00:00</div>
-    </div>
 
     <div id="segment" class="segment" style="display: none;">
         <span id="segment-content"></span>
@@ -312,10 +249,13 @@ async function initWebSocket(userId) {
         try {
             const data = JSON.parse(event.data); // Parsowanie wiadomości JSON
             if (data.type === 'user-instruction' && data.userId === userId) {
-                enqueueCue(data.instruction, data.url, data.cueTime);
-            } else if (data.type === 'reset' && data.userId === userId) {
-                // Resetuj informacje o Cue
-                resetCueInfo();
+                displayInstruction(data.instruction); // Wyświetlanie instrukcji
+                if (data.segmentX) {
+                    renderSegmentX(data.segmentX); // Wyświetlanie linków lub segmentów X
+                }
+                if (data.url) {
+                    loadUrlInIframe(data.url); // Załadowanie URL do iframe
+                }
             }
         } catch (error) {
             console.error('Błąd przetwarzania wiadomości:', error);
@@ -325,22 +265,12 @@ async function initWebSocket(userId) {
     websocket.onclose = function() {
         console.log('Połączenie WebSocket zamknięte.');
         document.getElementById('connection-error').style.display = 'block';
-        attemptReconnect(userId);
     };
 
     websocket.onerror = function(error) {
         console.error('Błąd WebSocket:', error);
         document.getElementById('connection-error').style.display = 'block';
     };
-}
-
-// Funkcja do obsługi ponownego łączenia WebSocket
-function attemptReconnect(userId) {
-    setTimeout(() => {
-        console.log('Próbuję ponownie połączyć się z serwerem WebSocket...');
-        document.getElementById('connection-error').style.display = 'block';
-        initWebSocket(userId);
-    }, 5000); // Próba ponownego połączenia po 5 sekundach
 }
 
 // Funkcja do wyświetlania instrukcji
@@ -482,127 +412,6 @@ function toggleCustomizationPanel() {
 
 // Event listener dla przycisku togglingu
 document.getElementById('toggle-customization').addEventListener('click', toggleCustomizationPanel);
-
-// Funkcje Zarządzania Cue
-
-// Inicjalizacja kolejki Cue
-let cueQueue = [];
-let currentCue = null;
-let countdownInterval = null;
-
-// Funkcja do dodawania Cue do kolejki
-function enqueueCue(message, url, cueTime) {
-    const cue = { message, url, cueTime };
-    cueQueue.push(cue);
-    // Sortuj kolejkę według czasu Cue
-    cueQueue.sort((a, b) => a.cueTime - b.cueTime);
-    console.log('Dodano Cue do kolejki:', cue);
-    // Jeśli nie ma aktualnego Cue, wyświetl najbliższy
-    if (!currentCue) {
-        displayNextCueFromQueue();
-    }
-}
-
-// Funkcja do wyświetlania najbliższego Cue z kolejki
-function displayNextCueFromQueue() {
-    if (cueQueue.length === 0) {
-        currentCue = null;
-        resetCueInfo();
-        return;
-    }
-    currentCue = cueQueue.shift();
-    displayCue(currentCue);
-}
-
-// Funkcja do wyświetlania Cue
-function displayCue(cue) {
-    const cueInfoDiv = document.getElementById('cueInfo');
-    const cueMessageEl = document.getElementById('cueMessage');
-    const cueURLEl = document.getElementById('cueURL');
-    const countdownEl = document.getElementById('countdown');
-
-    // Wyświetl sekcję Cue Info
-    cueInfoDiv.style.display = 'block';
-    cueMessageEl.textContent = cue.message || 'Brak wiadomości';
-    if (cue.url) {
-        cueURLEl.href = cue.url;
-        cueURLEl.textContent = cue.url;
-    } else {
-        cueURLEl.href = '#';
-        cueURLEl.textContent = 'Brak URL';
-    }
-
-    // Oblicz czas pozostały do Cue
-    const currentTime = Math.floor(Date.now() / 1000); // Aktualny czas w sekundach
-    const timeRemaining = cue.cueTime - currentTime;
-
-    if (timeRemaining > 0) {
-        startCountdown(timeRemaining, countdownEl, () => {
-            // Callback po zakończeniu odliczania
-            displayNextCueFromQueue();
-        });
-    } else {
-        countdownEl.textContent = 'Cue już nastąpił';
-        // Automatycznie przejdź do następnego Cue
-        setTimeout(() => {
-            displayNextCueFromQueue();
-        }, 2000); // Czekaj 2 sekundy przed przejściem do następnego Cue
-    }
-}
-
-// Funkcja resetująca informacje o Cue
-function resetCueInfo() {
-    const cueInfoDiv = document.getElementById('cueInfo');
-    const cueMessageEl = document.getElementById('cueMessage');
-    const cueURLEl = document.getElementById('cueURL');
-    const countdownEl = document.getElementById('countdown');
-
-    cueInfoDiv.style.display = 'none';
-    cueMessageEl.textContent = 'Brak Cue';
-    cueURLEl.href = '#';
-    cueURLEl.textContent = 'Brak URL';
-    countdownEl.textContent = '00:00:00';
-
-    if (countdownInterval) {
-        clearInterval(countdownInterval);
-        countdownInterval = null;
-    }
-}
-
-// Funkcja rozpoczynająca odliczanie czasu
-function startCountdown(seconds, displayElement, onComplete) {
-    if (countdownInterval) {
-        clearInterval(countdownInterval);
-    }
-
-    let remaining = seconds;
-
-    updateCountdownDisplay(remaining, displayElement);
-
-    countdownInterval = setInterval(() => {
-        remaining--;
-        if (remaining <= 0) {
-            clearInterval(countdownInterval);
-            displayElement.textContent = 'Cue nastąpił!';
-            if (onComplete) onComplete();
-        } else {
-            updateCountdownDisplay(remaining, displayElement);
-        }
-    }, 1000);
-}
-
-// Funkcja aktualizująca wyświetlany czas odliczania
-function updateCountdownDisplay(seconds, displayElement) {
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    displayElement.textContent = `${padZero(hrs)}:${padZero(mins)}:${padZero(secs)}`;
-}
-
-// Funkcja dodająca zero przed jednocyfrowymi liczbami
-function padZero(num) {
-    return num < 10 ? '0' + num : num;
-}
 
 // Inicjalizacja ustawień personalizacji po załadowaniu strony
 window.onload = async function() {

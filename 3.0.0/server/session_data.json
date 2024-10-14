@@ -1,0 +1,218 @@
+{
+  "scenes": [
+    {
+      "id": "scene-70e18234-b761-4615-bbab-a8c275fafe64",
+      "type": "regular",
+      "title": "nowa scena",
+      "content": "",
+      "users": {
+        "user1": "Treść dla user1",
+        "user3": "",
+        "user2": "Treść dla user2"
+      },
+      "multimedia": {},
+      "order": 5,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true
+      }
+    },
+    {
+      "id": "scene-b69c18c3-8261-4466-9b7b-c371b8e94353",
+      "type": "regular",
+      "title": "Kolejna scena",
+      "content": "",
+      "users": {
+        "user1": "Nowa treść 1",
+        "user2": "Nowa treść dla 2",
+        "user3": ""
+      },
+      "multimedia": {},
+      "order": 3,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true
+      }
+    },
+    {
+      "id": "scene-256306cc-4b27-4f73-b83c-26d4ea9e0ad3",
+      "type": "regular",
+      "title": "kolejna regular",
+      "content": "",
+      "users": {
+        "user1": "UUUUUSER1",
+        "user2": "",
+        "user3": ""
+      },
+      "multimedia": {},
+      "order": 4,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true
+      }
+    },
+    {
+      "id": "scene-c2f2c70e-ff16-4fd4-85e2-7befc50e5c94",
+      "type": "regular",
+      "title": "nowe sceny",
+      "content": "",
+      "users": {
+        "user1": "treść",
+        "user2": "",
+        "user3": ""
+      },
+      "multimedia": {},
+      "order": 5,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true
+      }
+    },
+    {
+      "id": "scene-4b162cc8-bef4-4ea2-b654-5d67f7fdd6b5",
+      "type": "regular",
+      "title": "Nowa",
+      "content": "",
+      "users": {
+        "user1": "HEJKA!",
+        "user2": "",
+        "user3": ""
+      },
+      "multimedia": {},
+      "order": 6,
+      "userSelections": {
+        "user1": true,
+        "user2": true,
+        "user3": true
+      }
+    },
+    {
+      "id": "af7cd73d-00e5-4907-9fa6-f8662f342e05",
+      "type": "regular",
+      "title": "Scena 1",
+      "description": "",
+      "audioURL": "http://192.168.0.23:3000/uploads/327ea5e9-752c-4029-b7d5-d76062fb9619.mp3",
+      "audioFileName": "Klasyczna.mp3",
+      "cues": [
+        {
+          "id": "cue-34c6bf45-0258-4d70-ac2a-1ab5d103bf5e",
+          "name": "Cue 1",
+          "time": 5.75,
+          "users": [
+            "user2"
+          ],
+          "messages": {
+            "user2": "napisdouser2wCue"
+          },
+          "urls": {
+            "user2": ""
+          },
+          "triggered": false,
+          "sceneId": "scene-f586c3b2-e986-44bf-b7c1-01b61523d6f6"
+        },
+        {
+          "id": "cue-e9ecd728-9b25-4580-9c0a-a90d5312f556",
+          "name": "Cue 2",
+          "time": 13.47,
+          "users": [
+            "user2"
+          ],
+          "messages": {
+            "user2": "Drugie CUe do 1"
+          },
+          "urls": {
+            "user2": ""
+          },
+          "triggered": false,
+          "sceneId": "scene-f586c3b2-e986-44bf-b7c1-01b61523d6f6"
+        },
+        {
+          "id": "cue-94ecb9f7-b06b-48ea-9c3f-6268d01f2182",
+          "name": "Cue 3",
+          "time": 19.061975,
+          "users": [
+            "user1"
+          ],
+          "messages": {
+            "user1": "Trzecie Cue do 1"
+          },
+          "urls": {
+            "user1": ""
+          },
+          "triggered": false,
+          "sceneId": "scene-f586c3b2-e986-44bf-b7c1-01b61523d6f6"
+        }
+      ],
+      "cueCount": 0,
+      "duration": 120.05875,
+      "currentTime": 15.446855
+    },
+    {
+      "id": "scene-c94ab8a2-cacc-419e-8cfa-105015432f69",
+      "type": "timeline",
+      "title": "Scena 1",
+      "description": "",
+      "audioURL": "http://192.168.0.23:3000/uploads/b521be91-0444-45e3-a947-ee547b48c599.mp3",
+      "audioFileName": "Filmowa.mp3",
+      "cues": [
+        {
+          "id": "cue-2efbe9d6-d5b6-4b61-96c0-6154fef5895b",
+          "name": "Cue 1",
+          "time": 9.21,
+          "users": [
+            "user2"
+          ],
+          "messages": {
+            "user2": "coś jest nie tak "
+          },
+          "urls": {
+            "user2": ""
+          },
+          "triggered": false,
+          "sceneId": "scene-c94ab8a2-cacc-419e-8cfa-105015432f69"
+        },
+        {
+          "id": "cue-c0ce026c-9860-4725-9b26-2d9d6954463f",
+          "name": "Cue 2",
+          "time": 18.29232,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false,
+          "sceneId": "scene-c94ab8a2-cacc-419e-8cfa-105015432f69"
+        },
+        {
+          "id": "cue-29e01fe1-6570-4e79-9c11-a99985dbba05",
+          "name": "Cue 3",
+          "time": 25.926122,
+          "users": [],
+          "messages": {},
+          "urls": {},
+          "triggered": false,
+          "sceneId": "scene-c94ab8a2-cacc-419e-8cfa-105015432f69"
+        }
+      ],
+      "cueCount": 0,
+      "duration": 161.7502,
+      "currentTime": 0
+    }
+  ],
+  "users": [
+    {
+      "id": "user1",
+      "name": "Testowy user1"
+    },
+    {
+      "id": "user2",
+      "name": "Testowy user2"
+    },
+    {
+      "id": "user3",
+      "name": "Tewstowy user3"
+    }
+  ]
+}

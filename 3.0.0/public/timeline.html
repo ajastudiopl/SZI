@@ -927,79 +927,81 @@
     }
 
     function generateCueMessageInputs(selectedUsers, existingMessages, existingUrls) {
-        cueMessagesDiv.innerHTML = '';
-        cueUrlsDiv.innerHTML = '';
-        existingMessages = existingMessages || {};
-        existingUrls = existingUrls || {};
+    cueMessagesDiv.innerHTML = '';
+    cueUrlsDiv.innerHTML = '';
+    
+    selectedUsers.forEach(user => {
+        const safeUserId = makeSafeId(user);
+        
+        // Tworzenie pola wiadomości dla użytkownika
+        const messageDiv = document.createElement('div');
+        messageDiv.innerHTML = `
+            <label for="message-${safeUserId}">Wiadomość dla użytkownika ${user}:</label>
+            <textarea id="message-${safeUserId}" data-user="${user}" rows="2">${existingMessages[user] || ''}</textarea>
+        `;
+        cueMessagesDiv.appendChild(messageDiv);
+
+        // Tworzenie pola URL dla użytkownika
+        const urlDiv = document.createElement('div');
+        urlDiv.innerHTML = `
+            <label for="url-${safeUserId}">URL dla użytkownika ${user}:</label>
+            <input type="text" id="url-${safeUserId}" data-user="${user}" value="${existingUrls[user] || ''}">
+        `;
+        cueUrlsDiv.appendChild(urlDiv);
+    });
+}
+
+function saveCueEdits() {
+    try {
+        if (!editingCueId || !currentScene) return;
+        const cue = currentScene.cues.find(c => c.id === editingCueId);
+        if (!cue) return;
+
+        // Aktualizuj nazwę i czas Cue
+        cue.name = cueNameInput.value;
+        cue.time = parseTime(cueTimeInput.value);
+        cue.triggered = false;
+
+        // Aktualizuj użytkowników
+        const selectedUsers = Array.from(cueUsersSelect.selectedOptions).map(option => option.value);
+        cue.users = selectedUsers;
+
+        // Aktualizuj wiadomości i URL dla każdego użytkownika
+        cue.messages = {}; // Resetuj wiadomości dla użytkowników
+        cue.urls = {};     // Resetuj URL-e dla użytkowników
+
         selectedUsers.forEach(user => {
-            const userName = users.find(u => u.id === user)?.name || user;
             const safeUserId = makeSafeId(user);
 
-            const messageDiv = document.createElement('div');
-            messageDiv.innerHTML = `
-                <label for="message-${safeUserId}">Wiadomość dla ${userName}:</label>
-                <textarea id="message-${safeUserId}" data-user="${user}" rows="2">${existingMessages[user] || ''}</textarea>
-            `;
-            cueMessagesDiv.appendChild(messageDiv);
+            // Pobierz wiadomość dla użytkownika
+            const messageTextarea = document.getElementById(`message-${safeUserId}`);
+            if (messageTextarea) {
+                cue.messages[user] = messageTextarea.value; // Zapisz wiadomość dla użytkownika
+            }
 
-            const urlDiv = document.createElement('div');
-            urlDiv.innerHTML = `
-                <label for="url-${safeUserId}">URL dla ${userName}:</label>
-                <input type="text" id="url-${safeUserId}" data-user="${user}" value="${existingUrls[user] || ''}">
-            `;
-            cueUrlsDiv.appendChild(urlDiv);
+            // Pobierz URL dla użytkownika
+            const urlInput = document.getElementById(`url-${safeUserId}`);
+            if (urlInput) {
+                cue.urls[user] = urlInput.value; // Zapisz URL dla użytkownika
+            }
         });
+
+        // Dodaj logowanie, aby sprawdzić, czy dane są poprawnie ustawione
+        console.log('Zapisane dane Cue:', cue);
+
+        // Zamknij modal
+        closeEditCueModal();
+
+        // Zapisz sceny na serwerze
+        saveScenesToServer();
+
+        renderScenes();
+        renderCuesOnWaveform();
+    } catch (error) {
+        console.error('Błąd podczas zapisywania edycji Cue:', error);
+        alert('Wystąpił błąd podczas zapisywania edycji Cue. Sprawdź konsolę przeglądarki.');
     }
-
-    function saveCueEdits() {
-        try {
-            if (!editingCueId || !currentScene) return;
-            const cue = currentScene.cues.find(c => c.id === editingCueId);
-            if (!cue) return;
-
-            // Aktualizuj nazwę i czas Cue
-            cue.name = cueNameInput.value;
-            cue.time = parseTime(cueTimeInput.value);
-            cue.triggered = false;
-
-            // Aktualizuj użytkowników
-            const selectedUsers = Array.from(cueUsersSelect.selectedOptions).map(option => option.value);
-            cue.users = selectedUsers;
-
-            // Aktualizuj wiadomości i URL
-            cue.messages = {};
-            cue.urls = {};
-
-            selectedUsers.forEach(user => {
-                const safeUserId = makeSafeId(user);
-
-                const messageTextarea = document.getElementById(`message-${safeUserId}`);
-                if (messageTextarea) {
-                    cue.messages[user] = messageTextarea.value;
-                }
-
-                const urlInput = document.getElementById(`url-${safeUserId}`);
-                if (urlInput) {
-                    cue.urls[user] = urlInput.value;
-                }
-            });
-
-            // Dodaj logowanie, aby sprawdzić, czy dane są poprawnie ustawione
-            console.log('Zapisane dane Cue:', cue);
-
-            // Zamknij modal
-            closeEditCueModal();
-
-            // Zapisz sceny na serwerze
-            saveScenesToServer();
-
-            renderScenes();
-            renderCuesOnWaveform();
-        } catch (error) {
-            console.error('Błąd podczas zapisywania edycji Cue:', error);
-            alert('Wystąpił błąd podczas zapisywania edycji Cue. Sprawdź konsolę przeglądarki.');
-        }
-    }
+}
 
     function previousCue() {
         if (!editingCueId || !currentScene) return;
@@ -1023,24 +1025,25 @@
 
     // Funkcja do wyzwalania Cue
     function triggerCue(cue) {
-        if (websocket && websocket.readyState === WebSocket.OPEN) {
-            cue.users.forEach(user => {
-                const message = {
-                    type: 'user-instruction',
-                    userId: user,
-                    instruction: cue.messages[user] || '',
-                    url: cue.urls[user] || '',
-                    sceneId: cue.sceneId,
-                    cueId: cue.id,
-                    cueTime: cue.time
-                };
-                websocket.send(JSON.stringify(message));
-                console.log('Wysłano wiadomość do użytkownika:', user, message);
-            });
-        } else {
-            console.error('WebSocket nie jest otwarty');
-        }
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+        cue.users.forEach(user => {
+            const message = {
+                type: 'user-instruction',
+                userId: user,
+                instruction: cue.messages[user] || '',  // Pobierz wiadomość dla tego użytkownika
+                url: cue.urls[user] || '',              // Pobierz URL dla tego użytkownika
+                sceneId: cue.sceneId,
+                cueId: cue.id,
+                cueTime: cue.time
+            };
+            websocket.send(JSON.stringify(message));  // Wyślij wiadomość przez WebSocket
+            console.log('Wysłano wiadomość do użytkownika:', user, message);
+        });
+    } else {
+        console.error('WebSocket nie jest otwarty');
     }
+}
+
 
     // Funkcje Zapisywania i Ładowania Scen z Serwera
     function saveScenesToServer() {
